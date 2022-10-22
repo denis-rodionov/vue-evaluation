@@ -1,89 +1,112 @@
 <template>
   <v-app id="inspire">
-    <v-system-bar app>
-      <v-spacer></v-spacer>
-
-      <v-icon>mdi-square</v-icon>
-
-      <v-icon>mdi-circle</v-icon>
-
-      <v-icon>mdi-triangle</v-icon>
-    </v-system-bar>
-
     <v-navigation-drawer
       v-model="drawer"
       app
     >
-      <v-sheet
-        color="grey lighten-4"
-        class="pa-4"
+    <v-list dense>
+      <v-subheader>NAVIGATION</v-subheader>
+      <v-list-item-group
+        v-model="selectedItem"
+        color="primary"
       >
-        <v-avatar
-          class="mb-4"
-          color="grey darken-1"
-          size="64"
-        ></v-avatar>
-
-        <div>john@vuetifyjs.com</div>
-      </v-sheet>
-
-      <v-divider></v-divider>
-
-      <v-list>
         <v-list-item
-          v-for="[icon, text] in links"
-          :key="icon"
-          link
+          v-for="(item, i) in menuItems"
+          :key="i"
         >
           <v-list-item-icon>
-            <v-icon>{{ icon }}</v-icon>
+            <v-icon v-text="item.icon"></v-icon>
           </v-list-item-icon>
-
           <v-list-item-content>
-            <v-list-item-title>{{ text }}</v-list-item-title>
+            <v-list-item-title v-text="item.text"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-      </v-list>
+      </v-list-item-group>
+    </v-list>
     </v-navigation-drawer>
+
+    <v-app-bar app>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+
+      <v-toolbar-title>{{ menuItems[selectedItem].text }}</v-toolbar-title>
+      <v-btn
+                class="mx-2"
+                dark
+                color="cyan"
+                right
+                fixed
+              >
+                Create
+              </v-btn>
+    </v-app-bar>
 
     <v-main>
       <v-container
+        v-if="selectedItem === 0"
         class="py-8 px-6"
         fluid
       >
         <v-row>
           <v-col
-            v-for="card in cards"
-            :key="card"
             cols="12"
           >
             <v-card>
-              <v-subheader>{{ card }}</v-subheader>
+              <v-subheader>List</v-subheader>
 
-              <v-list two-line>
-                <template v-for="n in 6">
-                  <v-list-item
-                    :key="n"
-                  >
-                    <v-list-item-avatar color="grey darken-1">
-                    </v-list-item-avatar>
-
-                    <v-list-item-content>
-                      <v-list-item-title>Message {{ n }}</v-list-item-title>
-
-                      <v-list-item-subtitle>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil repellendus distinctio similique
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
-
-                  <v-divider
-                    v-if="n !== 6"
-                    :key="`divider-${n}`"
-                    inset
-                  ></v-divider>
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">
+                        Plot Name
+                      </th>
+                      <th class="text-left">
+                        Field Size
+                      </th>
+                      <th class="text-left">
+                        Variety
+                      </th>
+                      <th  class="text-left">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="item in cultivations"
+                      :key="item.plotname"
+                    >
+                      <td>{{ item.plotname }}</td>
+                      <td>{{ item.fieldsize }}</td>
+                      <td>{{ item.variety }}</td>
+                      <td>
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          dark
+                          x-small
+                          color="cyan"
+                        >
+                          <v-icon dark>
+                            mdi-pencil
+                          </v-icon>
+                        </v-btn>
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          dark
+                          x-small
+                          color="red"
+                        >
+                          <v-icon dark>
+                            mdi-trash-can
+                          </v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
                 </template>
-              </v-list>
+              </v-simple-table>
             </v-card>
           </v-col>
         </v-row>
@@ -94,15 +117,19 @@
 
 <script>
   export default {
-    data: () => ({
-      cards: ['Today', 'Yesterday'],
-      drawer: null,
-      links: [
-        ['mdi-inbox-arrow-down', 'Inbox'],
-        ['mdi-send', 'Send'],
-        ['mdi-delete', 'Trash'],
-        ['mdi-alert-octagon', 'Spam'],
+    data: () => ({ 
+      drawer: true,
+      selectedItem: 0,
+      menuItems: [
+        { text: 'Cultivation', icon: 'mdi-clock' },
+        { text: 'Fluid Storage', icon: 'mdi-account' },
+        { text: 'Fluid Storage Content', icon: 'mdi-flag' },
       ],
+      cultivations: [
+        { plotname: "green", fieldsize: 15, variety: "sdf asdf sd fgn sdflgdsf"},
+        { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf"},
+        { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf"}
+      ]
     }),
   }
 </script>

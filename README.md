@@ -5,6 +5,17 @@
 npm install
 ```
 
+Install firebase tools:
+```
+npm install -g firebase-tools
+```
+
+### Deploy to Firebase Apps
+```
+npm run build
+firebase deploy
+```
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

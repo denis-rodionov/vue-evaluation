@@ -1,0 +1,664 @@
+{
+    "cultivation":{
+       "url":"/cultivations",
+       "persistence":{
+          "type":"document"
+       },
+       "model_name":"cultivation",
+       "dynamic_attributes":[
+          {
+             "method_name":"plotname",
+             "definition_name":"plotname",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"unique"
+                }
+             ],
+             "labels":{
+                "en":"plot",
+                "de":"Parzelle"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"fieldsize",
+             "definition_name":"fieldsize",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"size in ha",
+                "de":"GrÃ¶ÃŸe in ha"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"variety",
+             "definition_name":"variety",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"variety",
+                "de":"Weinsorte"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"year_planted",
+             "definition_name":"year_planted",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"max_length",
+                   "value":4
+                },
+                {
+                   "type":"min_length",
+                   "value":4
+                }
+             ],
+             "labels":{
+                "en":"first year of planting",
+                "de":"Erstbepflanzung"
+             },
+             "default_value":null,
+             "type":"integer"
+          },
+          {
+             "method_name":"vines_sum",
+             "definition_name":"vines_sum",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"numbers of vines",
+                "de":"Anzahl der WeinstÃ¶cke"
+             },
+             "default_value":null,
+             "type":"integer"
+          },
+          {
+             "method_name":"action_done",
+             "definition_name":"action_done",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"action done",
+                "de":"Beschreibung der Arbeit"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"issues",
+             "definition_name":"issues",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"Issues"
+             },
+             "default_value":false,
+             "type":"boolean"
+          }
+       ],
+       "labels":{
+          "en":"vineyard",
+          "de":"Weinberg"
+       }
+    },
+    "fluid_storage":{
+       "url":"/fluid_storages",
+       "persistence":{
+          "type":"document"
+       },
+       "model_name":"fluid_storage",
+       "dynamic_attributes":[
+          {
+             "method_name":"tankame",
+             "definition_name":"tankame",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"unique"
+                }
+             ],
+             "labels":{
+                "en":"tankname",
+                "de":"Tankname"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"maxvolume_in_l",
+             "definition_name":"maxvolume_in_l",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"number"
+                }
+             ],
+             "labels":{
+                "en":"maxvolume in liter",
+                "de":"Maximales Volumen in Litern"
+             },
+             "default_value":null,
+             "type":"number"
+          }
+       ],
+       "labels":{
+          "en":"fluid storage",
+          "de":"Tanklager"
+       }
+    },
+    "fluid_storage_content":{
+       "url":"/fluid_storage_contents",
+       "persistence":{
+          "type":"document"
+       },
+       "model_name":"fluid_storage_content",
+       "dynamic_attributes":[
+          {
+             "method_name":"variety",
+             "definition_name":"variety",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"variety",
+                "de":"Weinsorte"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"year",
+             "definition_name":"year",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"vintage",
+                "de":"Jahrgang"
+             },
+             "default_value":null,
+             "type":"integer"
+          },
+          {
+             "method_name":"is_volume_in_l",
+             "definition_name":"is_volume_in_l",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"contents in liter",
+                "de":"Inhalt in Litern"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"action_done",
+             "definition_name":"action_done",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"specific job done",
+                "de":"Art der ausgefÃ¼hrten Arbeit"
+             },
+             "default_value":null,
+             "type":"text"
+          }
+       ],
+       "labels":{
+          "en":"fluid storage contents",
+          "de":"Tanklager Inhalt"
+       }
+    },
+    "vinification_material":{
+       "url":"/vinification_materials",
+       "persistence":{
+          "type":"document"
+       },
+       "model_name":"vinification_material",
+       "dynamic_attributes":[
+          {
+             "method_name":"kind_of_product",
+             "definition_name":"kind_of_product",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"type of product",
+                "de":"Art des Produkts"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"producer",
+             "definition_name":"producer",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"producer",
+                "de":"Hersteller"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"lot_number",
+             "definition_name":"lot_number",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"unique"
+                }
+             ],
+             "labels":{
+                "en":"lotnumber",
+                "de":"Chargennummer"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"amount_in_x",
+             "definition_name":"amount_in_X",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"amount in value X",
+                "de":"Menge in Wert X"
+             },
+             "default_value":null,
+             "type":"text"
+          }
+       ],
+       "labels":{
+          "en":"vinification products",
+          "de":"Produkte zur Weinherstellung"
+       }
+    },
+    "lab_values":{
+       "url":"/lab_values",
+       "persistence":{
+          "type":"document"
+       },
+       "model_name":"lab_values",
+       "dynamic_attributes":[
+          {
+             "method_name":"sample_name",
+             "definition_name":"sample_name",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"sample name, tank, vintage, date",
+                "de":"Probenname, Tank, Jahrgang, Datum"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"free_so2",
+             "definition_name":"free_So2",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"free SO2 mg/l",
+                "de":"free SO2 mg/l"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"total_so2",
+             "definition_name":"total_So2",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"total SO2 mg/l",
+                "de":"total SO2 mg/l"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"p_h",
+             "definition_name":"pH",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"pH",
+                "de":"pH"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"sugar",
+             "definition_name":"sugar",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"sugar in g/l",
+                "de":"Zucker in g/l"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"value_ntu",
+             "definition_name":"value_NTU",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"NTU",
+                "de":"NTU"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"density",
+             "definition_name":"density",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"density in X",
+                "de":"Dichte in X"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"alcohol",
+             "definition_name":"alcohol",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"alcohol in %",
+                "de":"Alkoholgehalt in %"
+             },
+             "default_value":null,
+             "type":"number"
+          },
+          {
+             "method_name":"notes",
+             "definition_name":"notes",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"notes and tasting notes",
+                "de":"Notizen/Tasting Notes"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"harvest",
+             "definition_name":"harvest",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"Harvest"
+             },
+             "default_value":false,
+             "type":"boolean"
+          },
+          {
+             "method_name":"default_analyse",
+             "definition_name":"default_analyse",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"Default_analyse"
+             },
+             "default_value":false,
+             "type":"boolean"
+          },
+          {
+             "method_name":"decision_needed",
+             "definition_name":"decision_needed",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"Decision_needed"
+             },
+             "default_value":false,
+             "type":"boolean"
+          }
+       ],
+       "labels":{
+          "en":"lab values",
+          "de":"Laborwerte"
+       }
+    },
+    "equipment_general":{
+       "url":"/equipment_generals",
+       "persistence":{
+          "type":"document"
+       },
+       "model_name":"equipment_general",
+       "dynamic_attributes":[
+          {
+             "method_name":"kind_of_equipment",
+             "definition_name":"kind_of_equipment",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"type of equipment",
+                "de":"Art des Equipments"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"producer",
+             "definition_name":"producer",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"producer",
+                "de":"Hersteller"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"serial_number",
+             "definition_name":"serial_number",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"unique"
+                }
+             ],
+             "labels":{
+                "en":"serialnumber",
+                "de":"Seriennummer"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"cost_action",
+             "definition_name":"cost_action",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"min_length",
+                   "value":1
+                }
+             ],
+             "labels":{
+                "en":"cost in â‚¬ and explanation of job done",
+                "de":"Kosten und ErklÃ¤rung der Arbeit"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"date",
+             "definition_name":"date",
+             "validators":[
+                {
+                   "type":"presence"
+                },
+                {
+                   "type":"min_length",
+                   "value":8
+                }
+             ],
+             "labels":{
+                "en":"date",
+                "de":"Datum"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"broken",
+             "definition_name":"broken",
+             "validators":[
+                
+             ],
+             "labels":{
+                "en":"Broken"
+             },
+             "default_value":false,
+             "type":"boolean"
+          }
+       ],
+       "labels":{
+          "en":"Equipment",
+          "de":"Equipment"
+       }
+    },
+    "bottling":{
+       "url":"/bottlings",
+       "persistence":{
+          "type":"document"
+       },
+       "model_name":"bottling",
+       "dynamic_attributes":[
+          {
+             "method_name":"kind_of_product",
+             "definition_name":"kind_of_product",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"name of product",
+                "de":"Name des Produkts"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"source_tank",
+             "definition_name":"source_tank",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"source tank",
+                "de":"Quelltank"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"lot_number",
+             "definition_name":"lot_number",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"Bottling/Labeling date",
+                "de":"Chargennummer"
+             },
+             "default_value":null,
+             "type":"text"
+          },
+          {
+             "method_name":"amount_in_x",
+             "definition_name":"amount_in_X",
+             "validators":[
+                {
+                   "type":"presence"
+                }
+             ],
+             "labels":{
+                "en":"amount in pieces",
+                "de":"Menge StÃ¼ck"
+             },
+             "default_value":null,
+             "type":"text"
+          }
+       ],
+       "labels":{
+          "en":"Bottling/Labeling Report",
+          "de":"AbfÃ¼ll/Label Report"
+       }
+    }
+ }

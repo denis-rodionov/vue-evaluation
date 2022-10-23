@@ -29,16 +29,83 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title>{{ menuItems[selectedItem].text }}</v-toolbar-title>
-      <v-btn
-                class="mx-2"
+
+      <v-dialog
+      v-model="dialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            class="mx-2"
+            dark
+            color="cyan"
+            right
+            fixed
+            v-bind="attrs"
+            v-on="on"
+          >
+            Create
+          </v-btn>
+        </template>
+        <v-card>
+          <v-toolbar
+            dark
+            color="cyan"
+          >
+            <v-btn
+              icon
+              dark
+              @click="dialog = false"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-toolbar-title>Create "{{ menuItems[selectedItem].text }}"</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn
                 dark
-                color="cyan"
-                right
-                fixed
+                text
+                @click="dialog = false"
               >
-                Create
+                Save
               </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+
+          <v-container>
+            <v-form
+              ref="form"
+              v-model="valid"
+              lazy-validation
+            >
+              <v-text-field
+                v-model="plotname"
+                :counter="100"
+                label="Plot Nmae"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="fieldSize"
+                label="Field Size"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="varity"
+                label="Variety"
+                required
+              ></v-text-field>
+            </v-form>
+          </v-container>
+
+          <v-divider></v-divider>
+        </v-card>
+      </v-dialog>
     </v-app-bar>
+    
 
     <v-main>
       <v-container
@@ -111,6 +178,8 @@
           </v-col>
         </v-row>
       </v-container>
+
+      
     </v-main>
   </v-app>
 </template>
@@ -129,7 +198,8 @@
         { plotname: "green", fieldsize: 15, variety: "sdf asdf sd fgn sdflgdsf"},
         { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf"},
         { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf"}
-      ]
+      ],
+      dialog: false
     }),
   }
 </script>

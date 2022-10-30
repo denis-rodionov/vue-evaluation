@@ -8,7 +8,7 @@
       <v-subheader>NAVIGATION</v-subheader>
       <v-list-item-group
         v-model="selectedItem"
-        color="primary"
+        color="cyan"
       >
         <v-list-item
           v-for="(item, i) in menuItems"
@@ -153,6 +153,7 @@
                           dark
                           x-small
                           color="cyan"
+                          @click="dialog = true"
                         >
                           <v-icon dark>
                             mdi-pencil
@@ -185,21 +186,34 @@
 </template>
 
 <script>
+  import SchemaService from './services/SchemaService';
+
   export default {
     data: () => ({ 
       drawer: true,
       selectedItem: 0,
       menuItems: [
-        { text: 'Cultivation', icon: 'mdi-clock' },
-        { text: 'Fluid Storage', icon: 'mdi-account' },
+        { text: 'Cultivation', icon: 'mdi-flag' },
+        { text: 'Fluid Storage', icon: 'mdi-flag' },
         { text: 'Fluid Storage Content', icon: 'mdi-flag' },
+        { text: 'Vinification Material', icon: 'mdi-flag' },
+        { text: 'Lab Values', icon: 'mdi-flag' },
+        { text: 'Equipment General', icon: 'mdi-flag' },
+        { text: 'Bottling', icon: 'mdi-flag' },
       ],
       cultivations: [
-        { plotname: "green", fieldsize: 15, variety: "sdf asdf sd fgn sdflgdsf"},
+        { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf"},
         { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf"},
         { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf"}
       ],
       dialog: false
     }),
+    methods: {
+    },
+    async created() {
+      let schemaService = new SchemaService();
+      await schemaService.init();
+      this.cultivations = schemaService.getCultivations();
+    }
   }
 </script>

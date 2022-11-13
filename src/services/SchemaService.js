@@ -17,10 +17,11 @@ export default class SchemaService {
         return this.getEntities(cultivationUrl);
     }
 
-    async createCultivation() {
+    async createCultivation(cultivation) {
         const cultivationUrl = this.schema.cultivation.url;
         const data = {
-            plotname: "test"
+            plotname: cultivation.plotname,
+            year_planted: cultivation.year_planted
         }
 
         await this.postEntity(cultivationUrl, data);

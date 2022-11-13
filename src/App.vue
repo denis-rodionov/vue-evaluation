@@ -77,25 +77,45 @@
           <v-container>
             <v-form
               ref="form"
-              v-model="valid"
-              lazy-validation
             >
               <v-text-field
-                v-model="plotname"
+                v-model="dialogObject.plotname"
                 :counter="100"
                 label="Plot Name"
                 required
               ></v-text-field>
 
               <v-text-field
-                v-model="fieldSize"
+                v-model="dialogObject.fieldSize"
                 label="Field Size"
+              ></v-text-field>
+
+              <v-text-field
+                v-model="dialogObject.varity"
+                label="Variety"
+              ></v-text-field>
+
+              <v-text-field
+                v-model="dialogObject.year_planted"
+                label="Year Planted"
                 required
               ></v-text-field>
 
               <v-text-field
-                v-model="varity"
-                label="Variety"
+                v-model="dialogObject.vines_sum"
+                label="Vines Sum"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="dialogObject.action_done"
+                label="Action Done"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="dialogObject.issues"
+                label="Issues"
                 required
               ></v-text-field>
             </v-form>
@@ -118,6 +138,11 @@
         type="error"
         v-if="error"
       >{{ error }}</v-alert>
+      <v-alert
+        dismissible
+        type="success"
+        v-if="successMessage"
+      >{{ successMessage }}</v-alert>
         <v-row>
           <v-col
             cols="12"
@@ -198,8 +223,6 @@
     return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
-  
-
   export default {
     data: () => ({ 
       drawer: true,
@@ -219,13 +242,17 @@
         { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf"}
       ],
       dialog: false,
-      error: ""
+      dialogObject: {},
+      error: "",
+      successMessage: false
     }),
     methods: {
       async onDialogSave() {
+        console.log(JSON.stringify(this.dialogObject));
         this.dialog = false;
         try {
-          await this.schemaService.createCultivation();
+          await this.schemaService.createCultivation(this.dialogObject);
+          this.showSuccessMessage("Cultivation object is created!")
         }
         catch {
           await this.showError("Could not create an item. See console logs for more details")
@@ -235,6 +262,11 @@
         this.error = errorText;
         await sleep(3000);
         this.error = "";
+      },
+      async showSuccessMessage(message) {
+        this.successMessage = message;
+        await sleep(3000);
+        this.successMessage = "";
       }
     },
 

@@ -1,13 +1,14 @@
 const BASE_URL = 'https://dynaflow.dev.brainwave-software.com';
 
 export default class SchemaService {
-
-
     async init() {
         console.log("Initializing schemas...");
 
         try {
             const response = await fetch(BASE_URL + "/_models");
+            if (response.status != 200) {
+                throw new Error(`GET request returned ${response.status}: ${response.statusText}`);
+            }
             this.schema = await response.json();
             console.log(this.schema);
         } catch (error) {
@@ -66,7 +67,13 @@ export default class SchemaService {
         console.log(`Fetching url: ${url}`);
 
         const fullUrl = BASE_URL + url;
-        const response = await fetch(fullUrl)
+        let response;
+        try {
+            response = await fetch(fullUrl);
+        }
+        catch (error) {
+            throw new Error(`fetch thrown an error: ${error}`);
+        }
         if (response.status != 200) {
             throw new Error(`GET request returned ${response.status}: ${response.statusText}`);
         }

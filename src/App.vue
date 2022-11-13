@@ -57,7 +57,7 @@
             <v-btn
               icon
               dark
-              @click="dialog = false"
+              @click="dialog=false"
             >
               <v-icon>mdi-close</v-icon>
             </v-btn>
@@ -67,7 +67,7 @@
               <v-btn
                 dark
                 text
-                @click="dialog = false"
+                @click="onDialogSave"
               >
                 Save
               </v-btn>
@@ -83,7 +83,7 @@
               <v-text-field
                 v-model="plotname"
                 :counter="100"
-                label="Plot Nmae"
+                label="Plot Name"
                 required
               ></v-text-field>
 
@@ -113,6 +113,11 @@
         class="py-8 px-6"
         fluid
       >
+      <v-alert
+        dismissible
+        type="error"
+        v-if="error"
+      >{{ error }}</v-alert>
         <v-row>
           <v-col
             cols="12"
@@ -178,6 +183,7 @@
             </v-card>
           </v-col>
         </v-row>
+        
       </v-container>
 
       
@@ -187,6 +193,12 @@
 
 <script>
   import SchemaService from './services/SchemaService';
+
+  function sleep(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
+
+  
 
   export default {
     data: () => ({ 
@@ -206,14 +218,30 @@
         { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf"},
         { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf"}
       ],
-      dialog: false
+      dialog: false,
+      error: ""
     }),
     methods: {
+      async onDialogSave() {
+        this.dialog = false;
+        try {
+          await this.schemaService.createCultivation();
+        }
+        catch {
+          await this.showError("Could not create an item. See console logs for more details")
+        }
+      },
+      async showError(errorText) {
+        this.error = errorText;
+        await sleep(3000);
+        this.error = "";
+      }
     },
+
     async created() {
-      let schemaService = new SchemaService();
-      await schemaService.init();
-      this.cultivations = schemaService.getCultivations();
+      this.schemaService = new SchemaService();
+      await this.schemaService.init();
+      this.cultivations = this.schemaService.getCultivations();
     }
   }
 </script>

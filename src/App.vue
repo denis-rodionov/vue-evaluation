@@ -49,90 +49,18 @@
             Create
           </v-btn>
         </template>
-        <v-card>
-          <v-toolbar
-            dark
-            color="cyan"
-          >
-            <v-btn
-              icon
-              dark
-              @click="dialog=false"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-toolbar-title>Create "{{ menuItems[selectedItem].text }}"</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items>
-              <v-btn
-                dark
-                text
-                @click="onDialogSave"
-              >
-                Save
-              </v-btn>
-            </v-toolbar-items>
-          </v-toolbar>
 
-          <v-container>
-            <v-form
-              ref="form"
-            >
-              <v-text-field
-                v-model="dialogObject.plotname"
-                :counter="100"
-                label="Plot Name"
-                required
-              ></v-text-field>
+        <!-- form component menuItems[selectedItem].text -->
+        <CultivationForm 
+          v-if="selectedItem === 0"
+          @close="dialog = false"
+          @save="onDialogSave($event)"
+        />
 
-              <v-text-field
-                v-model="dialogObject.fieldSize"
-                label="Field Size"
-              ></v-text-field>
-
-              <v-text-field
-                v-model="dialogObject.varity"
-                label="Variety"
-              ></v-text-field>
-
-              <v-text-field
-                v-model="dialogObject.year_planted"
-                label="Year Planted"
-                required
-              ></v-text-field>
-
-              <v-text-field
-                v-model="dialogObject.vines_sum"
-                label="Vines Sum"
-                required
-              ></v-text-field>
-
-              <v-text-field
-                v-model="dialogObject.action_done"
-                label="Action Done"
-                required
-              ></v-text-field>
-
-              <v-text-field
-                v-model="dialogObject.issues"
-                label="Issues"
-                required
-              ></v-text-field>
-            </v-form>
-          </v-container>
-
-          <v-divider></v-divider>
-        </v-card>
       </v-dialog>
     </v-app-bar>
     
-
     <v-main>
-      <v-container
-        v-if="selectedItem === 0"
-        class="py-8 px-6"
-        fluid
-      >
       <v-alert
         dismissible
         type="error"
@@ -143,6 +71,11 @@
         type="success"
         v-if="successMessage"
       >{{ successMessage }}</v-alert>
+      <v-container
+        v-if="selectedItem === 0"
+        class="py-8 px-6"
+        fluid
+      >
         <v-row>
           <v-col
             cols="12"
@@ -163,7 +96,7 @@
                       <th class="text-left">
                         Variety
                       </th>
-                      <th  class="text-left">
+                      <th class="text-left">
                         Actions
                       </th>
                     </tr>
@@ -188,14 +121,14 @@
                           <v-icon dark>
                             mdi-pencil
                           </v-icon>
-                        </v-btn>
-                        <v-btn
-                          class="mx-2"
-                          fab
-                          dark
-                          x-small
-                          color="red"
-                        >
+                          </v-btn>
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            dark
+                            x-small
+                            color="red"
+                          >
                           <v-icon dark>
                             mdi-trash-can
                           </v-icon>
@@ -218,12 +151,16 @@
 
 <script>
   import SchemaService from './services/SchemaService';
+  import CultivationForm from './components/CultivationForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
   export default {
+    components: {
+      CultivationForm
+    },
     data: () => ({ 
       drawer: true,
       selectedItem: 0,
@@ -242,13 +179,12 @@
         { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf"}
       ],
       dialog: false,
-      dialogObject: {},
       error: "",
       successMessage: false
     }),
     methods: {
-      async onDialogSave() {
-        console.log(JSON.stringify(this.dialogObject));
+      async onDialogSave(event) {
+        console.log(JSON.stringify(event));
         this.dialog = false;
         try {
           await this.schemaService.createCultivation(this.dialogObject);
@@ -260,20 +196,27 @@
       },
       async showError(errorText) {
         this.error = errorText;
-        await sleep(3000);
+        await sleep(5000);
         this.error = "";
       },
       async showSuccessMessage(message) {
         this.successMessage = message;
-        await sleep(3000);
+        await sleep(5000);
         this.successMessage = "";
       }
     },
 
     async created() {
       this.schemaService = new SchemaService();
-      await this.schemaService.init();
-      this.cultivations = this.schemaService.getCultivations();
+      
+      try {
+        await this.schemaService.init();
+        this.cultivations = await this.schemaService.getCultivations();
+      }
+      catch (error) {
+        console.log(JSON.stringify(error));
+        this.showError(`Could not fetch the cultivations: ${error}`)
+      }
     }
   }
 </script>

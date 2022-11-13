@@ -11,10 +11,10 @@ export default class SchemaService {
     }
 
     async getCultivations() {
-        console.log("Get cultivations...");
+        console.log("Geting cultivations...");
         const cultivationUrl = this.schema.cultivation.url;
-
-        return this.getEntities(cultivationUrl);
+        
+        return await this.getEntities(cultivationUrl);
     }
 
     async createCultivation(cultivation) {
@@ -58,6 +58,10 @@ export default class SchemaService {
 
         const fullUrl = BASE_URL + url;
         const response = await fetch(fullUrl)
+        if (response.status != 200) {
+            throw new Error(`GET request returned ${response.status}: ${response.statusText}`);
+        }
+
         const entities = await response.json();
         console.log(`fetched entities: ${JSON.stringify(entities)}`);
 

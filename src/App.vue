@@ -81,63 +81,7 @@
             cols="12"
           >
             <v-card>
-              <v-subheader>List</v-subheader>
-
-              <v-simple-table>
-                <template v-slot:default>
-                  <thead>
-                    <tr>
-                      <th class="text-left">
-                        Plot Name
-                      </th>
-                      <th class="text-left">
-                        Field Size
-                      </th>
-                      <th class="text-left">
-                        Variety
-                      </th>
-                      <th class="text-left">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="item in cultivations"
-                      :key="item.plotname"
-                    >
-                      <td>{{ item.plotname }}</td>
-                      <td>{{ item.fieldsize }}</td>
-                      <td>{{ item.variety }}</td>
-                      <td>
-                        <v-btn
-                          class="mx-2"
-                          fab
-                          dark
-                          x-small
-                          color="cyan"
-                          @click="dialog = true"
-                        >
-                          <v-icon dark>
-                            mdi-pencil
-                          </v-icon>
-                          </v-btn>
-                          <v-btn
-                            class="mx-2"
-                            fab
-                            dark
-                            x-small
-                            color="red"
-                          >
-                          <v-icon dark>
-                            mdi-trash-can
-                          </v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
+              <CultivationList :itemList="cultivations" />
             </v-card>
           </v-col>
         </v-row>
@@ -152,6 +96,7 @@
 <script>
   import SchemaService from './services/SchemaService';
   import CultivationForm from './components/CultivationForm'
+  import CultivationList from './components/CultivationList'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -159,7 +104,7 @@
 
   export default {
     components: {
-      CultivationForm
+      CultivationForm, CultivationList
     },
     data: () => ({ 
       drawer: true,

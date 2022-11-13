@@ -119,9 +119,9 @@
         { text: 'Bottling', icon: 'mdi-flag' },
       ],
       cultivations: [
-        { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf"},
-        { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf"},
-        { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf"}
+        { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
+        { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
+        { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false}
       ],
       dialog: false,
       error: "",

@@ -7,18 +7,19 @@
     <v-list dense>
       <v-subheader>NAVIGATION</v-subheader>
       <v-list-item-group
-        v-model="selectedItem"
         color="cyan"
+        v-model="selectedItemIndex"
       >
         <v-list-item
-          v-for="(item, i) in menuItems"
-          :key="i"
+          v-for="(value, entityName) in menuItems" 
+          :key="entityName"
+          @click="selectedItem = entityName"
         >
           <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
+            <v-icon v-text="value.icon"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title v-text="item.text"></v-list-item-title>
+            <v-list-item-title v-text="value.text"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
@@ -50,9 +51,8 @@
           </v-btn>
         </template>
 
-        <!-- form component menuItems[selectedItem].text -->
         <CultivationForm 
-          v-if="selectedItem === 0"
+          v-if="selectedItem === 'cultivation'"
           @close="dialog = false"
           @save="onDialogSave($event)"
         />
@@ -72,7 +72,6 @@
         v-if="successMessage"
       >{{ successMessage }}</v-alert>
       <v-container
-        v-if="selectedItem === 0"
         class="py-8 px-6"
         fluid
       >
@@ -81,7 +80,10 @@
             cols="12"
           >
             <v-card>
-              <CultivationList :itemList="cultivations" />
+              <CultivationList 
+                v-if="selectedItem === 'cultivation'"
+                :itemList="menuItems['cultivation'].list" 
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -108,21 +110,24 @@
     },
     data: () => ({ 
       drawer: true,
-      selectedItem: 0,
-      menuItems: [
-        { text: 'Cultivation', icon: 'mdi-flag' },
-        { text: 'Fluid Storage', icon: 'mdi-flag' },
-        { text: 'Fluid Storage Content', icon: 'mdi-flag' },
-        { text: 'Vinification Material', icon: 'mdi-flag' },
-        { text: 'Lab Values', icon: 'mdi-flag' },
-        { text: 'Equipment General', icon: 'mdi-flag' },
-        { text: 'Bottling', icon: 'mdi-flag' },
-      ],
-      cultivations: [
-        { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
-        { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
-        { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false}
-      ],
+      selectedItem: 'cultivation',
+      selectedItemIndex: 0,   // shortcut to set initial selected menu item
+      menuItems: {
+        cultivation: { text: 'Cultivation', icon: 'mdi-flag', list: [
+          { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
+          { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
+          { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false}
+        ]},
+        fluid_storage: { text: 'Fluid Storage', icon: 'mdi-flag', list: [
+          { tankame: "dslkg", maxvolume_in_l: 32 },
+          { tankame: "qweqwe", maxvolume_in_l: 34 }
+        ] },
+        fluid_storage_content: { text: 'Fluid Storage Content', icon: 'mdi-flag' },
+        vinification_material: { text: 'Vinification Material', icon: 'mdi-flag' },
+        lab_values: { text: 'Lab Values', icon: 'mdi-flag' },
+        equipment_general: { text: 'Equipment General', icon: 'mdi-flag' },
+        bottling: { text: 'Bottling', icon: 'mdi-flag' },
+      },
       dialog: false,
       error: "",
       successMessage: false
@@ -130,6 +135,7 @@
     methods: {
       async onDialogSave(event) {
         console.log(JSON.stringify(event));
+        console.log("selectedItem:" + this.selectedItem);
         this.dialog = false;
         try {
           await this.schemaService.createCultivation(this.dialogObject);
@@ -148,6 +154,14 @@
         this.successMessage = message;
         await sleep(5000);
         this.successMessage = "";
+      },
+      async loadItems(entityName) {
+        try {
+          this.menuItems[entityName].list = await this.schemaService.getItems(entityName);
+        }
+        catch (error) {
+          this.showError(`${error}`)
+        }
       }
     },
 
@@ -156,7 +170,8 @@
       
       try {
         await this.schemaService.init();
-        this.cultivations = await this.schemaService.getCultivations();
+        await this.loadItems('cultivation');
+        await this.loadItems('fluid_storage');
       }
       catch (error) {
         this.showError(`${error}`)

@@ -16,14 +16,14 @@ export default class SchemaService {
         }
     }
 
-    async getCultivations() {
-        console.log("Geting cultivations...");
-        const cultivationUrl = this.schema.cultivation.url;
+    async getItems(entityName) {
+        console.log(`Geting ${entityName}...`);
+        const url = this.schema[entityName].url;
         
         try {
-            return await this.getEntities(cultivationUrl);
+            return await this.getEntities(url);
         } catch (error) {
-            throw new Error(`Could not fetch cultivations: ${error}`)
+            throw new Error(`Could not fetch ${entityName}: ${error}`)
         }
     }
 

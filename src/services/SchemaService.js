@@ -5,16 +5,25 @@ export default class SchemaService {
 
     async init() {
         console.log("Initializing schemas...");
-        const response = await fetch(BASE_URL + "/_models");
-        this.schema = await response.json();
-        console.log(this.schema);
+
+        try {
+            const response = await fetch(BASE_URL + "/_models");
+            this.schema = await response.json();
+            console.log(this.schema);
+        } catch (error) {
+            throw new Error(`Could not fetch the schema: ${error}`)
+        }
     }
 
     async getCultivations() {
         console.log("Geting cultivations...");
         const cultivationUrl = this.schema.cultivation.url;
         
-        return await this.getEntities(cultivationUrl);
+        try {
+            return await this.getEntities(cultivationUrl);
+        } catch (error) {
+            throw new Error(`Could not fetch cultivations: ${error}`)
+        }
     }
 
     async createCultivation(cultivation) {

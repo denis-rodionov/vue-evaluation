@@ -214,8 +214,7 @@
         this.cultivations = await this.schemaService.getCultivations();
       }
       catch (error) {
-        console.log(JSON.stringify(error));
-        this.showError(`Could not fetch the cultivations: ${error}`)
+        this.showError(`${error}`)
       }
     }
   }

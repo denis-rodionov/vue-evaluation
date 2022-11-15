@@ -100,6 +100,14 @@
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
         />
+        <BottlingForm
+          v-if="selectedItem === 'bottling'"
+          :updatingObject="updatingItem"
+          :update="update"
+          @close="closeDialog"
+          @save="onDialogSave($event)"
+          @update="onDialogUpdate($event)"
+        />
       </v-dialog>
     </v-app-bar>
     
@@ -159,6 +167,12 @@
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
+              <BottlingList
+                v-if="selectedItem === 'bottling'"
+                :itemList="menuItems['bottling'].list" 
+                @update="onItemUpdate($event)"
+                @delete="onItemDelete($event)"
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -181,6 +195,8 @@
   import LabValuesForm from './components/LabValuesForm'
   import EquipmentGeneralList from './components/EquipmentGeneralList'
   import EquipmentGeneralForm from './components/EquipmentGeneralForm'
+  import BottlingList from './components/BottlingList'
+  import BottlingForm from './components/BottlingForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -191,7 +207,8 @@
       CultivationForm, CultivationList, FluidStorageList, FluidStorageForm,
       FluidStorageContentList, FluidStorageContentForm,
       VinificationMaterialList, VinificationMaterialForm,
-      LabValuesList, LabValuesForm, EquipmentGeneralList, EquipmentGeneralForm
+      LabValuesList, LabValuesForm, EquipmentGeneralList, EquipmentGeneralForm,
+      BottlingList, BottlingForm
     },
     data: () => ({ 
       drawer: true,
@@ -226,7 +243,11 @@
           { kind_of_equipment: "3fsdf", producer: "fff", serial_number: "34gws", cost_action: "3dsdf", date: "27 November 2022", broken: false },
           { kind_of_equipment: "23ff", producer: "fff", serial_number: "gfw333", cost_action: "3dsdf", date: "27 November 2022", broken: false }
         ] },
-        bottling: { text: 'Bottling', icon: 'mdi-bottle-tonic' },
+        bottling: { text: 'Bottling Report', icon: 'mdi-bottle-tonic', list: [
+          { kind_of_product: "ewdf", source_tank: "sdhhn", lot_number: "356d", amount_in_x: "g33" },
+          { kind_of_product: "ewdf", source_tank: "sdhhn", lot_number: "356d", amount_in_x: "g33" },
+          { kind_of_product: "ewdf", source_tank: "sdhhn", lot_number: "356d", amount_in_x: "g33" }
+        ] },
       },
       dialog: false,
       updatingItem: {},   // for updating object

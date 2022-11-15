@@ -60,6 +60,14 @@
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
         />
+        <FluidStorageForm 
+          v-if="selectedItem === 'fluid_storage'"
+          :updatingObject="updatingItem"
+          :update="update"
+          @close="closeDialog"
+          @save="onDialogSave($event)"
+          @update="onDialogUpdate($event)"
+        />
 
       </v-dialog>
     </v-app-bar>
@@ -90,6 +98,12 @@
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
+              <FluidStorageList 
+                v-if="selectedItem === 'fluid_storage'"
+                :itemList="menuItems['fluid_storage'].list" 
+                @update="onItemUpdate($event)"
+                @delete="onItemDelete($event)"
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -102,6 +116,8 @@
   import SchemaService from './services/SchemaService';
   import CultivationForm from './components/CultivationForm'
   import CultivationList from './components/CultivationList'
+  import FluidStorageList from './components/FluidStorageList'
+  import FluidStorageForm from './components/FluidStorageForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -109,27 +125,27 @@
 
   export default {
     components: {
-      CultivationForm, CultivationList
+      CultivationForm, CultivationList, FluidStorageList, FluidStorageForm
     },
     data: () => ({ 
       drawer: true,
       selectedItem: 'cultivation',
       selectedItemIndex: 0,   // shortcut to set initial selected menu item
       menuItems: {
-        cultivation: { text: 'Cultivation', icon: 'mdi-flag', list: [
+        cultivation: { text: 'Cultivation', icon: 'mdi-compost', list: [
           { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
           { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
           { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false}
         ]},
-        fluid_storage: { text: 'Fluid Storage', icon: 'mdi-flag', list: [
-          { tankame: "dslkg", maxvolume_in_l: 32 },
-          { tankame: "qweqwe", maxvolume_in_l: 34 }
+        fluid_storage: { text: 'Fluid Storage', icon: 'mdi-database', list: [
+          { tankame: "Trsef", maxvolume_in_l: 32 },
+          { tankame: "Ufnee", maxvolume_in_l: 34 }
         ] },
-        fluid_storage_content: { text: 'Fluid Storage Content', icon: 'mdi-flag' },
-        vinification_material: { text: 'Vinification Material', icon: 'mdi-flag' },
-        lab_values: { text: 'Lab Values', icon: 'mdi-flag' },
-        equipment_general: { text: 'Equipment General', icon: 'mdi-flag' },
-        bottling: { text: 'Bottling', icon: 'mdi-flag' },
+        fluid_storage_content: { text: 'Fluid Storage Content', icon: 'mdi-blur-radial' },
+        vinification_material: { text: 'Vinification Material', icon: 'mdi-glass-wine' },
+        lab_values: { text: 'Lab Values', icon: 'mdi-flask-empty' },
+        equipment_general: { text: 'Equipment General', icon: 'mdi-scale' },
+        bottling: { text: 'Bottling', icon: 'mdi-bottle-tonic' },
       },
       dialog: false,
       updatingItem: {},   // for updating object
@@ -139,23 +155,25 @@
     }),
     methods: {
       async onDialogSave(event) {
-        console.log(`Saving cultivation ${JSON.stringify(event)}`);
+        const entity = this.selectedItem;
+        console.log(`Saving ${entity} ${JSON.stringify(event)}`);
         this.closeDialog();
         try {
-          const createdObject = await this.schemaService.createEntity(event, 'cultivation');
-          this.menuItems['cultivation'].list.push(createdObject);
-          await this.showSuccessMessage("Cultivation object is created!") 
+          const createdObject = await this.schemaService.createEntity(event, entity);
+          this.menuItems[entity].list.push(createdObject);
+          await this.showSuccessMessage(`${entity} object is saved!`) 
         }
         catch (error) { 
           await this.showError(`Could not create an item: ${error}`)
         }
       },
       async onDialogUpdate(event) {
+        const entity = this.selectedItem;
         console.log(`Updating object ${JSON.stringify(event)}`);
         this.closeDialog();
         try {
-          await this.schemaService.updateEntity(event, 'cultivation');
-          await this.showSuccessMessage("Cultivation object is updated!");
+          await this.schemaService.updateEntity(event, entity);
+          await this.showSuccessMessage(`${entity} object is updated!`);
         }
         catch (error) {
           await this.showError(`Could not update the object: ${error}`)

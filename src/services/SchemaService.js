@@ -21,7 +21,7 @@ export default class SchemaService {
         const url = this.getUrl(entityName);
         
         try {
-            return await this.getEntities(url);
+            return await this.getRequest(url);
         } catch (error) {
             throw new Error(`Could not fetch ${entityName}: ${error}`)
         }
@@ -31,7 +31,7 @@ export default class SchemaService {
         console.log(`SCHEMA: Creating ${entityName}: ${JSON.stringify(event)}`)
         const url = this.getUrl(entityName);
         const data = this.getObjectFromEvent(event, entityName);
-        await this.postEntity(url, data);
+        await this.postRequest(url, data);
 
         return data;
     }
@@ -57,7 +57,13 @@ export default class SchemaService {
         console.log(`SCHEMA: Updating ${entityName}: ${JSON.stringify(event)}`)
         const url = this.getUrl(entityName);
         const data = this.getObjectFromEvent(event, entityName);
-        await this.postEntity(url, data); 
+        await this.putRequest(url, data, event['id']); 
+    }
+
+    async deleteEntity(event, entityName) {
+        console.log(`SCHEMA: Deleting ${entityName}...`)
+        const url = this.getUrl(entityName);
+        await this.deleteRequest(url, event['id']);
     }
 
     getUrl(entityName) {
@@ -67,7 +73,7 @@ export default class SchemaService {
         return this.schema[entityName].url
     }
 
-    async postEntity(url, data) {
+    async postRequest(url, data) {
         const fullUrl = BASE_URL + url;
         let response;
 
@@ -93,7 +99,52 @@ export default class SchemaService {
         }
     }
 
-    async getEntities(url) {
+    async putRequest(url, data, id) {
+        const fullUrl = `${BASE_URL}${url}/${id}`;
+        let response;
+
+        console.log(`PUT request on URL ${fullUrl}`)
+        try {
+            response = await fetch(fullUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },  
+                body: JSON.stringify(data)
+              });
+
+            const result = await response.json();
+            
+            console.log(`PUT request returned: ${JSON.stringify(result)}`)
+        } catch (error) {
+            console.log(`Failed PUT request. Error: ${JSON.stringify(error)}`);
+        }
+        if (!response.ok) {
+            const error = (data && data.message) || response.statusText;
+            throw new Error(error);
+        }
+    }
+
+    async deleteRequest(url, id) {
+        console.log(`DELETE ${url}`);
+
+        const fullUrl = `${BASE_URL}${url}/${id}`;
+        let response;
+        try {
+            response = await fetch(fullUrl, {
+                method: 'DELETE',
+                headers: {}
+            });
+        }
+        catch (error) {
+            throw new Error(`fetch thrown an error: ${error}`);
+        }
+        if (response.status != 204) {
+            throw new Error(`DELETE request returned ${response.status}: ${response.statusText} (Expected 204)`);
+        }
+    }
+
+    async getRequest(url) {
         console.log(`Fetching url: ${url}`);
 
         const fullUrl = BASE_URL + url;

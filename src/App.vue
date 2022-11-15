@@ -202,7 +202,14 @@
         this.showUpdateDialog(event);
       },
       async onItemDelete(event) {
-        console.log(`On delete: ${JSON.stringify(event)}`);
+        const entity = this.selectedItem;
+        console.log(`On delete ${entity}: ${JSON.stringify(event)}`);
+        try {
+          await this.schemaService.deleteEntity(event, entity);
+          await this.showSuccessMessage(`Entity ${entity} was deleted: ${event}`)
+        } catch (error) {
+          await this.showError(`Could not delete the object: ${error}`)
+        }
       },
       closeDialog() {
         this.dialog = false;

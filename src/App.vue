@@ -92,6 +92,14 @@
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
         />
+        <EquipmentGeneralForm
+          v-if="selectedItem === 'equipment_general'"
+          :updatingObject="updatingItem"
+          :update="update"
+          @close="closeDialog"
+          @save="onDialogSave($event)"
+          @update="onDialogUpdate($event)"
+        />
       </v-dialog>
     </v-app-bar>
     
@@ -145,6 +153,12 @@
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
+              <EquipmentGeneralList
+                v-if="selectedItem === 'equipment_general'"
+                :itemList="menuItems['equipment_general'].list" 
+                @update="onItemUpdate($event)"
+                @delete="onItemDelete($event)"
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -165,6 +179,8 @@
   import VinificationMaterialForm from './components/VinificationMaterialForm'
   import LabValuesList from './components/LabValuesList'
   import LabValuesForm from './components/LabValuesForm'
+  import EquipmentGeneralList from './components/EquipmentGeneralList'
+  import EquipmentGeneralForm from './components/EquipmentGeneralForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -175,7 +191,7 @@
       CultivationForm, CultivationList, FluidStorageList, FluidStorageForm,
       FluidStorageContentList, FluidStorageContentForm,
       VinificationMaterialList, VinificationMaterialForm,
-      LabValuesList, LabValuesForm
+      LabValuesList, LabValuesForm, EquipmentGeneralList, EquipmentGeneralForm
     },
     data: () => ({ 
       drawer: true,
@@ -205,7 +221,11 @@
           { sample_name: "t2", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true},
           { sample_name: "t3", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true}
         ] },
-        equipment_general: { text: 'Equipment General', icon: 'mdi-scale' },
+        equipment_general: { text: 'Equipment', icon: 'mdi-scale', list: [
+          { kind_of_equipment: "fsdf", producer: "fff", serial_number: "2sdffdf", cost_action: "3dsdf", date: "27 November 2022", broken: false },
+          { kind_of_equipment: "3fsdf", producer: "fff", serial_number: "34gws", cost_action: "3dsdf", date: "27 November 2022", broken: false },
+          { kind_of_equipment: "23ff", producer: "fff", serial_number: "gfw333", cost_action: "3dsdf", date: "27 November 2022", broken: false }
+        ] },
         bottling: { text: 'Bottling', icon: 'mdi-bottle-tonic' },
       },
       dialog: false,

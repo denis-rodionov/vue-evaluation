@@ -2,7 +2,7 @@ const BASE_URL = 'https://dynaflow.dev.brainwave-software.com';
 
 export default class SchemaService {
     async init() {
-        console.log("Initializing schemas...");
+        console.log("SCHEMA: Initializing schemas...");
 
         try {
             const response = await fetch(BASE_URL + "/_models");
@@ -17,8 +17,8 @@ export default class SchemaService {
     }
 
     async getItems(entityName) {
-        console.log(`Geting ${entityName}...`);
-        const url = this.schema[entityName].url;
+        console.log(`SCHEMA: Geting ${entityName}...`);
+        const url = this.getUrl(entityName);
         
         try {
             return await this.getEntities(url);
@@ -27,14 +27,44 @@ export default class SchemaService {
         }
     }
 
-    async createCultivation(cultivation) {
-        const cultivationUrl = this.schema.cultivation.url;
-        const data = {
-            plotname: cultivation.plotname,
-            year_planted: cultivation.year_planted
-        }
+    async createEntity(event, entityName) {
+        console.log(`SCHEMA: Creating ${entityName}: ${JSON.stringify(event)}`)
+        const url = this.getUrl(entityName);
+        const data = this.getObjectFromEvent(event, entityName);
+        await this.postEntity(url, data);
 
-        await this.postEntity(cultivationUrl, data);
+        return data;
+    }
+
+    getObjectFromEvent(event, entityName) {
+        if (entityName == 'cultivation') {
+            return {
+                plotname: event.plotname,
+                fieldSize: event.fieldSize,
+                varity: event.varity,
+                year_planted: event.year_planted,
+                vines_sum: event.vines_sum,
+                action_done: event.action_done,
+                issues: event.issues
+            }
+        }
+        else {
+            throw new Error(`Unknow entity name '${entityName}'`)
+        }
+    }
+
+    async updateEntity(event, entityName) {
+        console.log(`SCHEMA: Updating ${entityName}: ${JSON.stringify(event)}`)
+        const url = this.getUrl(entityName);
+        const data = this.getObjectFromEvent(event, entityName);
+        await this.postEntity(url, data); 
+    }
+
+    getUrl(entityName) {
+        if (!this.schema) {
+            throw new Error("Schema was not loaded!");
+        }
+        return this.schema[entityName].url
     }
 
     async postEntity(url, data) {

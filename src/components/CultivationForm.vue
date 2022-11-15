@@ -1,41 +1,51 @@
 <script>
+import FormToolbar from './FormToolbar'
 export default {
-  props: ['formObject'],
-  emits: ['close', 'save'],
-  data() {
-    return {
-      count: 0,
-      mutatedObject: {}
+  props: ['updatingObject', 'update'],
+  emits: ['close', 'save', 'update'],
+  components: {
+    FormToolbar
+  },
+  data: () => ({
+      mutatedObject: {},
+  }),
+  methods: {
+    onClose() {
+      console.log("Component on close...")
+      this.mutatedObject = {};
+      this.$emit('close');
+    },
+    onUpdate() {
+      this.$emit('update', this.mutatedObject);
+      this.mutatedObject = {};
+    },
+    onSave() {
+      this.$emit('save', this.mutatedObject);
+      this.mutatedObject = {};
+    },
+    onStateChanged() {
+      console.log(`State changed: ${JSON.stringify(this.updatingObject)}`)
+      this.mutatedObject = this.updatingObject;
     }
+  },
+  created() {
+    this.onStateChanged();
+  },
+  beforeUpdate() {
+    this.onStateChanged();
   }
 }
 </script>
 
 <template>
     <v-card>
-        <v-toolbar
-            dark
-            color="cyan"
-        >
-            <v-btn
-              icon
-              dark
-              @click="$emit('close')"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-toolbar-title>Create "Create Cultivation"</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items>
-              <v-btn
-                dark
-                text
-                @click="$emit('save', mutatedObject)"
-              >
-                Save
-              </v-btn>
-            </v-toolbar-items>
-        </v-toolbar>
+        <FormToolbar
+          :update="update"
+          :mutatedObject="mutatedObject"
+          @save="onSave"
+          @update="onUpdate"
+          @close="onClose"
+        />
 
         <v-container>
             <v-form

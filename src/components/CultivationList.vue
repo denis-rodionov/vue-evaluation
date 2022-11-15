@@ -1,9 +1,12 @@
 <script>
 export default {
   props: ['itemList'],
-  emits: [],
+  emits: ['update', 'delete'],
   data: () => ({
-  })
+  }),
+  created() {
+    console.log(`List created: ${this.itemList}`)
+  }
 }
 </script>
 
@@ -36,12 +39,12 @@ export default {
                 <td>{{ item.variety }}</td>
                 <td>
                     <v-btn
-                      class="mx-2"
-                      fab
-                      dark
-                      x-small
-                      color="cyan"
-                      @click="dialog = true"
+                        class="mx-2"
+                        fab
+                        dark
+                        x-small
+                        color="cyan"
+                        @click="$emit('update', item)"
                     >
                         <v-icon dark>
                             mdi-pencil
@@ -53,6 +56,7 @@ export default {
                         dark
                         x-small
                         color="red"
+                        @click="$emit('delete', item)"
                     >
                         <v-icon dark>
                         mdi-trash-can

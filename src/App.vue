@@ -36,6 +36,7 @@
       fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
+      @input="onDialogInput($event)"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -53,8 +54,11 @@
 
         <CultivationForm 
           v-if="selectedItem === 'cultivation'"
-          @close="dialog = false"
+          :updatingObject="updatingItem"
+          :update="update"
+          @close="closeDialog"
           @save="onDialogSave($event)"
+          @update="onDialogUpdate($event)"
         />
 
       </v-dialog>
@@ -83,14 +87,13 @@
               <CultivationList 
                 v-if="selectedItem === 'cultivation'"
                 :itemList="menuItems['cultivation'].list" 
+                @update="onItemUpdate($event)"
+                @delete="onItemDelete($event)"
               />
             </v-card>
           </v-col>
         </v-row>
-        
       </v-container>
-
-      
     </v-main>
   </v-app>
 </template>
@@ -129,25 +132,38 @@
         bottling: { text: 'Bottling', icon: 'mdi-flag' },
       },
       dialog: false,
+      updatingItem: {},   // for updating object
+      update: false,      // if true, the form is used for update
       error: "",
       successMessage: false
     }),
     methods: {
       async onDialogSave(event) {
-        console.log(JSON.stringify(event));
-        console.log("selectedItem:" + this.selectedItem);
-        this.dialog = false;
+        console.log(`Saving cultivation ${JSON.stringify(event)}`);
+        this.closeDialog();
         try {
-          await this.schemaService.createCultivation(this.dialogObject);
-          this.showSuccessMessage("Cultivation object is created!")
+          const createdObject = await this.schemaService.createEntity(event, 'cultivation');
+          this.menuItems['cultivation'].list.push(createdObject);
+          await this.showSuccessMessage("Cultivation object is created!") 
         }
-        catch {
-          await this.showError("Could not create an item. See console logs for more details")
+        catch (error) { 
+          await this.showError(`Could not create an item: ${error}`)
+        }
+      },
+      async onDialogUpdate(event) {
+        console.log(`Updating object ${JSON.stringify(event)}`);
+        this.closeDialog();
+        try {
+          await this.schemaService.updateEntity(event, 'cultivation');
+          await this.showSuccessMessage("Cultivation object is updated!");
+        }
+        catch (error) {
+          await this.showError(`Could not update the object: ${error}`)
         }
       },
       async showError(errorText) {
         this.error = errorText;
-        await sleep(5000);
+        await sleep(10000);
         this.error = "";
       },
       async showSuccessMessage(message) {
@@ -161,6 +177,29 @@
         }
         catch (error) {
           this.showError(`${error}`)
+        }
+      },
+      async onItemUpdate(event) {
+        console.log(`On update: ${JSON.stringify(event)}`);
+        this.showUpdateDialog(event);
+      },
+      async onItemDelete(event) {
+        console.log(`On delete: ${JSON.stringify(event)}`);
+      },
+      closeDialog() {
+        this.dialog = false;
+        this.update = false;
+        this.updatingItem = {};
+      },
+      showUpdateDialog(updatingItem) {
+        this.updatingItem = updatingItem;
+        this.dialog = true;
+        this.update = true;
+      },
+      onDialogInput(event) {
+        console.log(`On dialog input: ${event}, ${this.dialog}`)
+        if (!event) {
+          this.closeDialog();
         }
       }
     },

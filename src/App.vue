@@ -76,7 +76,14 @@
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
         />
-
+        <VinificationMaterialForm
+          v-if="selectedItem === 'vinification_material'"
+          :updatingObject="updatingItem"
+          :update="update"
+          @close="closeDialog"
+          @save="onDialogSave($event)"
+          @update="onDialogUpdate($event)"
+        />
       </v-dialog>
     </v-app-bar>
     
@@ -118,6 +125,12 @@
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
+              <VinificationMaterialList 
+                v-if="selectedItem === 'vinification_material'"
+                :itemList="menuItems['vinification_material'].list" 
+                @update="onItemUpdate($event)"
+                @delete="onItemDelete($event)"
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -134,6 +147,8 @@
   import FluidStorageForm from './components/FluidStorageForm'
   import FluidStorageContentList from './components/FluidStorageContentList'
   import FluidStorageContentForm from './components/FluidStorageContentForm'
+  import VinificationMaterialList from './components/VinificationMaterialList'
+  import VinificationMaterialForm from './components/VinificationMaterialForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -142,7 +157,8 @@
   export default {
     components: {
       CultivationForm, CultivationList, FluidStorageList, FluidStorageForm,
-      FluidStorageContentList, FluidStorageContentForm
+      FluidStorageContentList, FluidStorageContentForm,
+      VinificationMaterialList, VinificationMaterialForm
     },
     data: () => ({ 
       drawer: true,
@@ -158,11 +174,15 @@
           { tankame: "Trsef", maxvolume_in_l: 32 },
           { tankame: "Ufnee", maxvolume_in_l: 34 }
         ] },
-        fluid_storage_content: { text: 'Fluid Storage Content', icon: 'mdi-blur-radial', list: [
+        fluid_storage_content: { text: 'Fluid Storage Contents', icon: 'mdi-blur-radial', list: [
           { variety: "Balaf", year: "2002", is_volume_in_l: 2, action_done: "None" },
           { variety: "feeedddff", year: "2002", is_volume_in_l: 2, action_done: "None" }
         ] },
-        vinification_material: { text: 'Vinification Material', icon: 'mdi-glass-wine' },
+        vinification_material: { text: 'Vinification Products', icon: 'mdi-glass-wine', list: [
+          { kind_of_product: "fweffsdf", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"},
+          { kind_of_product: "fdffws", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"},
+          { kind_of_product: "hgrr", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"}
+        ] },
         lab_values: { text: 'Lab Values', icon: 'mdi-flask-empty' },
         equipment_general: { text: 'Equipment General', icon: 'mdi-scale' },
         bottling: { text: 'Bottling', icon: 'mdi-bottle-tonic' },

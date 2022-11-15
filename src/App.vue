@@ -68,6 +68,14 @@
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
         />
+        <FluidStorageContentForm
+          v-if="selectedItem === 'fluid_storage_content'"
+          :updatingObject="updatingItem"
+          :update="update"
+          @close="closeDialog"
+          @save="onDialogSave($event)"
+          @update="onDialogUpdate($event)"
+        />
 
       </v-dialog>
     </v-app-bar>
@@ -104,6 +112,12 @@
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
+              <FluidStorageContentList 
+                v-if="selectedItem === 'fluid_storage_content'"
+                :itemList="menuItems['fluid_storage_content'].list" 
+                @update="onItemUpdate($event)"
+                @delete="onItemDelete($event)"
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -118,6 +132,8 @@
   import CultivationList from './components/CultivationList'
   import FluidStorageList from './components/FluidStorageList'
   import FluidStorageForm from './components/FluidStorageForm'
+  import FluidStorageContentList from './components/FluidStorageContentList'
+  import FluidStorageContentForm from './components/FluidStorageContentForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -125,7 +141,8 @@
 
   export default {
     components: {
-      CultivationForm, CultivationList, FluidStorageList, FluidStorageForm
+      CultivationForm, CultivationList, FluidStorageList, FluidStorageForm,
+      FluidStorageContentList, FluidStorageContentForm
     },
     data: () => ({ 
       drawer: true,
@@ -141,7 +158,10 @@
           { tankame: "Trsef", maxvolume_in_l: 32 },
           { tankame: "Ufnee", maxvolume_in_l: 34 }
         ] },
-        fluid_storage_content: { text: 'Fluid Storage Content', icon: 'mdi-blur-radial' },
+        fluid_storage_content: { text: 'Fluid Storage Content', icon: 'mdi-blur-radial', list: [
+          { variety: "Balaf", year: "2002", is_volume_in_l: 2, action_done: "None" },
+          { variety: "feeedddff", year: "2002", is_volume_in_l: 2, action_done: "None" }
+        ] },
         vinification_material: { text: 'Vinification Material', icon: 'mdi-glass-wine' },
         lab_values: { text: 'Lab Values', icon: 'mdi-flask-empty' },
         equipment_general: { text: 'Equipment General', icon: 'mdi-scale' },

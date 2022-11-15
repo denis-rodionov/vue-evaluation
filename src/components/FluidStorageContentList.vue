@@ -11,10 +11,13 @@ export default {
             <thead>
                 <tr>
                     <th class="text-left">
-                        Tankname
+                        Variety
                     </th>
                     <th class="text-left">
-                        Maxvolume in liter
+                        Vintage
+                    </th>
+                    <th class="text-left">
+                        Contents in liter
                     </th>
                     <th class="text-left">
                         Actions
@@ -24,10 +27,11 @@ export default {
             <tbody>
                 <tr
                   v-for="item in itemList"
-                  :key="item.tankame"
+                  :key="item.variety"
                 >
-                <td>{{ item.tankame }}</td>
-                <td>{{ item.maxvolume_in_l }}</td>
+                <td>{{ item.variety }}</td>
+                <td>{{ item.year }}</td>
+                <td>{{ item.is_volume_in_l }}</td>
                 <td>
                     <v-btn
                         class="mx-2"

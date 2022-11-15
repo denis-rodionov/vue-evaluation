@@ -1,12 +1,7 @@
 <script>
+import listMixin from './mixins/listMixin.js'
 export default {
-  props: ['itemList'],
-  emits: ['update', 'delete'],
-  data: () => ({
-  }),
-  created() {
-    console.log(`List created: ${this.itemList}`)
-  }
+    mixins: [listMixin]
 }
 </script>
 

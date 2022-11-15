@@ -84,6 +84,14 @@
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
         />
+        <LabValuesForm
+          v-if="selectedItem === 'lab_values'"
+          :updatingObject="updatingItem"
+          :update="update"
+          @close="closeDialog"
+          @save="onDialogSave($event)"
+          @update="onDialogUpdate($event)"
+        />
       </v-dialog>
     </v-app-bar>
     
@@ -131,6 +139,12 @@
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
+              <LabValuesList
+                v-if="selectedItem === 'lab_values'"
+                :itemList="menuItems['lab_values'].list" 
+                @update="onItemUpdate($event)"
+                @delete="onItemDelete($event)"
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -149,6 +163,8 @@
   import FluidStorageContentForm from './components/FluidStorageContentForm'
   import VinificationMaterialList from './components/VinificationMaterialList'
   import VinificationMaterialForm from './components/VinificationMaterialForm'
+  import LabValuesList from './components/LabValuesList'
+  import LabValuesForm from './components/LabValuesForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -158,7 +174,8 @@
     components: {
       CultivationForm, CultivationList, FluidStorageList, FluidStorageForm,
       FluidStorageContentList, FluidStorageContentForm,
-      VinificationMaterialList, VinificationMaterialForm
+      VinificationMaterialList, VinificationMaterialForm,
+      LabValuesList, LabValuesForm
     },
     data: () => ({ 
       drawer: true,
@@ -183,7 +200,11 @@
           { kind_of_product: "fdffws", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"},
           { kind_of_product: "hgrr", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"}
         ] },
-        lab_values: { text: 'Lab Values', icon: 'mdi-flask-empty' },
+        lab_values: { text: 'Lab Values', icon: 'mdi-flask-empty', list: [
+          { sample_name: "t1", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true},
+          { sample_name: "t2", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true},
+          { sample_name: "t3", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true}
+        ] },
         equipment_general: { text: 'Equipment General', icon: 'mdi-scale' },
         bottling: { text: 'Bottling', icon: 'mdi-bottle-tonic' },
       },

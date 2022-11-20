@@ -326,6 +326,10 @@
       catch (error) {
         this.showError(`${error}`)
       }
+    },
+
+    errorCaptured(err) {
+      this.showError(err.message);
     }
   }
 </script>

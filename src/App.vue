@@ -80,6 +80,41 @@
         type="success"
         v-if="successMessage"
       >{{ successMessage }}</v-alert>
+      <v-dialog
+        v-model="deletionConfirmDialog"
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            Delete item?
+          </v-card-title>
+
+          <v-card-text>
+            Are you sure you want to delete the selected item of 
+            {{ menuItems[selectedItem].text }}?
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              color="green darken-1"
+              text
+              @click="deletionConfirmDialog = false"
+            >
+              Cancel
+            </v-btn>
+
+            <v-btn
+              color="green darken-1"
+              text
+              @click="onItemDeletionConfirmed"
+            >
+              Yes
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-container
         class="py-8 px-6"
         fluid
@@ -124,6 +159,8 @@
       drawer: true,
       selectedItem: null,
       selectedItemIndex: 0,   // shortcut to set initial selected menu item
+      deletionConfirmDialog: false,
+      deletingItem: null,
       menuItems: {},
       mockItems: {
         cultivation: { text: 'Cultivation', icon: 'mdi-compost', list: [
@@ -290,14 +327,20 @@
         this.showUpdateDialog(event);
       },
       async onItemDelete(event) {
-        const entity = this.selectedItem;
-        console.log(`On delete ${entity}: ${JSON.stringify(event)}`);
+        console.log(`On delete ${JSON.stringify(event)}`);
+        this.deletionConfirmDialog = true;
+        this.deletingItem = event;
+      },
+      async onItemDeletionConfirmed() {
+        console.log(`Item deletion is confirmed: ${JSON.stringify(this.deletingItem)}`);
+        this.deletionConfirmDialog = false;
         try {
-          await this.schemaService.deleteEntity(event, entity);
-          await this.showSuccessMessage(`Entity ${entity} was deleted: ${event}`)
+          await this.schemaService.deleteEntity(this.deletingItem, this.selectedItem);
+          await this.showSuccessMessage(`Entity ${this.selectedItem} was deleted: ${this.deletingItem}`)
         } catch (error) {
           await this.showError(`Could not delete the object: ${error}`)
         }
+        this.deletingItem = null;
       },
       closeDialog() {
         this.dialog = false;

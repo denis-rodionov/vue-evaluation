@@ -32,11 +32,11 @@
       <v-toolbar-title>{{ menuItems[selectedItem].text }}</v-toolbar-title>
 
       <v-dialog
-      v-model="dialog"
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-      @input="onDialogInput($event)"
+        v-model="dialog"
+        fullscreen
+        hide-overlay
+        transition="dialog-bottom-transition"
+        @input="onDialogInput($event)"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -52,64 +52,18 @@
           </v-btn>
         </template>
 
-        <CultivationForm 
-          v-if="selectedItem === 'cultivation'"
-          :updatingObject="updatingItem"
-          :update="update"
-          @close="closeDialog"
-          @save="onDialogSave($event)"
-          @update="onDialogUpdate($event)"
-        />
-        <FluidStorageForm 
-          v-if="selectedItem === 'fluid_storage'"
-          :updatingObject="updatingItem"
-          :update="update"
-          @close="closeDialog"
-          @save="onDialogSave($event)"
-          @update="onDialogUpdate($event)"
-        />
-        <FluidStorageContentForm
-          v-if="selectedItem === 'fluid_storage_content'"
-          :updatingObject="updatingItem"
-          :update="update"
-          @close="closeDialog"
-          @save="onDialogSave($event)"
-          @update="onDialogUpdate($event)"
-        />
-        <VinificationMaterialForm
-          v-if="selectedItem === 'vinification_material'"
-          :updatingObject="updatingItem"
-          :update="update"
-          @close="closeDialog"
-          @save="onDialogSave($event)"
-          @update="onDialogUpdate($event)"
-        />
-        <LabValuesForm
-          v-if="selectedItem === 'lab_values'"
-          :updatingObject="updatingItem"
-          :update="update"
-          @close="closeDialog"
-          @save="onDialogSave($event)"
-          @update="onDialogUpdate($event)"
-        />
-        <EquipmentGeneralForm
-          v-if="selectedItem === 'equipment_general'"
-          :updatingObject="updatingItem"
-          :update="update"
-          @close="closeDialog"
-          @save="onDialogSave($event)"
-          @update="onDialogUpdate($event)"
-        />
-
-        <EntityForm
-          v-if="selectedItem === 'bottling'"
-          :updatingObject="updatingItem"
-          :update="update"
-          :schema="schema['bottling']"
-          @close="closeDialog"
-          @save="onDialogSave($event)"
-          @update="onDialogUpdate($event)"
-        />
+        <template v-for="(_, entityName) in menuItems">
+          <EntityForm
+            :key="entityName"
+            v-if="selectedItem === entityName"
+            :updatingObject="updatingItem"
+            :update="update"
+            :schema="schema[entityName]"
+            @close="closeDialog"
+            @save="onDialogSave($event)"
+            @update="onDialogUpdate($event)"
+          />
+        </template>
       </v-dialog>
     </v-app-bar>
     
@@ -133,49 +87,16 @@
             cols="12"
           >
             <v-card>
-              <CultivationList 
-                v-if="selectedItem === 'cultivation'"
-                :itemList="menuItems['cultivation'].list" 
-                @update="onItemUpdate($event)"
-                @delete="onItemDelete($event)"
-              />
-              <FluidStorageList 
-                v-if="selectedItem === 'fluid_storage'"
-                :itemList="menuItems['fluid_storage'].list" 
-                @update="onItemUpdate($event)"
-                @delete="onItemDelete($event)"
-              />
-              <FluidStorageContentList 
-                v-if="selectedItem === 'fluid_storage_content'"
-                :itemList="menuItems['fluid_storage_content'].list" 
-                @update="onItemUpdate($event)"
-                @delete="onItemDelete($event)"
-              />
-              <VinificationMaterialList 
-                v-if="selectedItem === 'vinification_material'"
-                :itemList="menuItems['vinification_material'].list" 
-                @update="onItemUpdate($event)"
-                @delete="onItemDelete($event)"
-              />
-              <LabValuesList
-                v-if="selectedItem === 'lab_values'"
-                :itemList="menuItems['lab_values'].list" 
-                @update="onItemUpdate($event)"
-                @delete="onItemDelete($event)"
-              />
-              <EquipmentGeneralList
-                v-if="selectedItem === 'equipment_general'"
-                :itemList="menuItems['equipment_general'].list" 
-                @update="onItemUpdate($event)"
-                @delete="onItemDelete($event)"
-              />
-              <EntityList
-                v-if="selectedItem === 'bottling'"
-                :itemList="menuItems['bottling'].list" 
-                :schema="schema['bottling']"
-                @update="onItemUpdate($event)"
-                @delete="onItemDelete($event)"
-              />
+              <template v-for="(_, entityName) in menuItems">
+                <EntityList
+                  :key="entityName"
+                  v-if="selectedItem === entityName"
+                  :itemList="menuItems[entityName].list" 
+                  :schema="schema[entityName]"
+                  @update="onItemUpdate($event)"
+                  @delete="onItemDelete($event)"
+                />
+              </template>
             </v-card>
           </v-col>
         </v-row>
@@ -186,18 +107,6 @@
 
 <script>
   import SchemaService from './services/SchemaService';
-  import CultivationForm from './components/CultivationForm'
-  import CultivationList from './components/CultivationList'
-  import FluidStorageList from './components/FluidStorageList'
-  import FluidStorageForm from './components/FluidStorageForm'
-  import FluidStorageContentList from './components/FluidStorageContentList'
-  import FluidStorageContentForm from './components/FluidStorageContentForm'
-  import VinificationMaterialList from './components/VinificationMaterialList'
-  import VinificationMaterialForm from './components/VinificationMaterialForm'
-  import LabValuesList from './components/LabValuesList'
-  import LabValuesForm from './components/LabValuesForm'
-  import EquipmentGeneralList from './components/EquipmentGeneralList'
-  import EquipmentGeneralForm from './components/EquipmentGeneralForm'
   import EntityList from './components/EntityList'
   import EntityForm from './components/EntityForm'
 
@@ -207,11 +116,7 @@
 
   export default {
     components: {
-      CultivationForm, CultivationList, FluidStorageList, FluidStorageForm,
-      FluidStorageContentList, FluidStorageContentForm,
-      VinificationMaterialList, VinificationMaterialForm,
-      LabValuesList, LabValuesForm, EquipmentGeneralList, EquipmentGeneralForm,
-      EntityList, EntityForm
+      EntityForm, EntityList
     },
     data: () => ({ 
       drawer: true,
@@ -414,6 +319,7 @@
       
       try {
         this.schema = await this.schemaService.get_schema();
+
         await this.loadItems('cultivation');
         await this.loadItems('fluid_storage');
       }

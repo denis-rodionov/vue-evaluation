@@ -29,7 +29,9 @@
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>{{ menuItems[selectedItem].text }}</v-toolbar-title>
+      <v-toolbar-title>
+        {{ selectedItem ? menuItems[selectedItem].text : "Undefined" }}
+      </v-toolbar-title>
 
       <v-dialog
         v-model="dialog"
@@ -120,9 +122,10 @@
     },
     data: () => ({ 
       drawer: true,
-      selectedItem: 'cultivation',
+      selectedItem: null,
       selectedItemIndex: 0,   // shortcut to set initial selected menu item
-      menuItems: {
+      menuItems: {},
+      mockItems: {
         cultivation: { text: 'Cultivation', icon: 'mdi-compost', list: [
           { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
           { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
@@ -319,12 +322,21 @@
       
       try {
         this.schema = await this.schemaService.get_schema();
-
-        await this.loadItems('cultivation');
-        await this.loadItems('fluid_storage');
       }
       catch (error) {
         this.showError(`${error}`)
+
+        // TODO: move to try-block when backend works again
+        Object.keys(this.schema).forEach(async (entityName) => {
+          if (!this.selectedItem) {
+            this.selectedItem = entityName;
+          }
+          this.menuItems[entityName] = {
+            text: this.schema[entityName].labels.en,
+            icon: 'mdi-database',
+            list: this.mockItems[entityName].list
+          }
+        });
       }
     },
 

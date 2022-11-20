@@ -167,9 +167,10 @@
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
-              <BottlingList
+              <EntityList
                 v-if="selectedItem === 'bottling'"
                 :itemList="menuItems['bottling'].list" 
+                :schema="schema['bottling']"
                 @update="onItemUpdate($event)"
                 @delete="onItemDelete($event)"
               />
@@ -195,8 +196,8 @@
   import LabValuesForm from './components/LabValuesForm'
   import EquipmentGeneralList from './components/EquipmentGeneralList'
   import EquipmentGeneralForm from './components/EquipmentGeneralForm'
-  import BottlingList from './components/BottlingList'
   import BottlingForm from './components/BottlingForm'
+  import EntityList from './components/EntityList'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -208,7 +209,7 @@
       FluidStorageContentList, FluidStorageContentForm,
       VinificationMaterialList, VinificationMaterialForm,
       LabValuesList, LabValuesForm, EquipmentGeneralList, EquipmentGeneralForm,
-      BottlingList, BottlingForm
+      BottlingForm, EntityList
     },
     data: () => ({ 
       drawer: true,
@@ -244,16 +245,91 @@
           { kind_of_equipment: "23ff", producer: "fff", serial_number: "gfw333", cost_action: "3dsdf", date: "27 November 2022", broken: false }
         ] },
         bottling: { text: 'Bottling Report', icon: 'mdi-bottle-tonic', list: [
-          { kind_of_product: "ewdf", source_tank: "sdhhn", lot_number: "356d", amount_in_x: "g33" },
-          { kind_of_product: "ewdf", source_tank: "sdhhn", lot_number: "356d", amount_in_x: "g33" },
-          { kind_of_product: "ewdf", source_tank: "sdhhn", lot_number: "356d", amount_in_x: "g33" }
+          { kind_of_product: "ewdf1", source_tank: "sdhhn1", lot_number: "356d1", amount_in_x: "g33" },
+          { kind_of_product: "ewdf2", source_tank: "sdhhn2", lot_number: "356d2", amount_in_x: "g33" },
+          { kind_of_product: "ewdf3", source_tank: "sdhhn3", lot_number: "356d3", amount_in_x: "g33" }
         ] },
       },
       dialog: false,
       updatingItem: {},   // for updating object
       update: false,      // if true, the form is used for update
       error: "",
-      successMessage: false
+      successMessage: false,
+      schema: {
+        bottling: {
+          url:"/bottlings",
+          persistence:{
+            type: "document"
+          },
+          model_name: "bottling",
+          dynamic_attributes: [
+          {
+            method_name: "kind_of_product",
+            definition_name: "kind_of_product",
+            validators:[
+               {
+                  type:"presence"
+               }
+            ],
+            labels:{
+               en: "name of product",
+               de: "Name des Produkts"
+            },
+            default_value: null,
+            type: "text"
+          },
+          {
+            method_name: "source_tank",
+            definition_name: "source_tank",
+            validators: [
+               {
+                  type:"presence"
+               }
+            ],
+            labels:{
+               en:"source tank",
+               de:"Quelltank"
+            },
+            default_value:null,
+            type:"text"
+          },
+          {
+            method_name: "lot_number",
+            definition_name: "lot_number",
+            validators: [
+               {
+                  type: "presence"
+               }
+            ],
+            labels:{
+               en:"Bottling/Labeling date",
+               de:"Chargennummer"
+            },
+            default_value:null,
+            type: "text"
+          },
+          {
+            method_name: "amount_in_x",
+            definition_name: "amount_in_X",
+            validators:[
+               {
+                  "type":"presence"
+               }
+            ],
+            labels:{
+               en:"amount in pieces",
+               de:"Menge StÃ¼ck"
+            },
+            default_value:null,
+            type:"text"
+          }
+          ],
+          labels:{
+            en: "Bottling/Labeling Report",
+            de: "AbfÃ¼ll/Label Report"
+          }
+        }
+      }
     }),
     methods: {
       async onDialogSave(event) {
@@ -335,7 +411,7 @@
       this.schemaService = new SchemaService();
       
       try {
-        await this.schemaService.init();
+        this.schema = await this.schemaService.get_schema();
         await this.loadItems('cultivation');
         await this.loadItems('fluid_storage');
       }

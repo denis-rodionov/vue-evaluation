@@ -1,7 +1,7 @@
 const BASE_URL = 'https://dynaflow.dev.brainwave-software.com';
 
 export default class SchemaService {
-    async init() {
+    async get_schema() {
         console.log("SCHEMA: Initializing schemas...");
 
         try {
@@ -11,6 +11,7 @@ export default class SchemaService {
             }
             this.schema = await response.json();
             console.log(this.schema);
+            return this.schema;
         } catch (error) {
             throw new Error(`Could not fetch the schema: ${error}`)
         }

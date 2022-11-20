@@ -1,7 +1,12 @@
 <script>
-import listMixin from './mixins/listMixin.js'
 export default {
-    mixins: [listMixin]
+    props: ['itemList', 'schema'],
+    emits: ['update', 'delete'],
+    data: () => ({
+    }),
+    created() {
+      console.log(`List created: ${this.itemList}`)
+    }
 }
 </script>
 
@@ -10,14 +15,11 @@ export default {
         <template v-slot:default>
             <thead>
                 <tr>
-                    <th class="text-left">
-                        Name of product
-                    </th>
-                    <th class="text-left">
-                        Source tank
-                    </th>
-                    <th class="text-left">
-                        Bottling/Labeling date
+                    <th class="text-left"
+                        v-for="attr in schema.dynamic_attributes"
+                        :key="attr.method_name"
+                    >
+                        {{ attr.labels.en }}
                     </th>
                     <th class="text-left">
                         Actions
@@ -27,11 +29,12 @@ export default {
             <tbody>
                 <tr
                   v-for="item in itemList"
-                  :key="item.kind_of_product"
+                  :key="item[Object.keys(item)[0]]"
                 >
-                <td>{{ item.kind_of_product }}</td>
-                <td>{{ item.source_tank }}</td>
-                <td>{{ item.lot_number }}</td>
+                <td 
+                    v-for="attr in schema.dynamic_attributes"
+                    :key="attr.method_name"
+                >{{ item[attr.method_name] }}</td>
                 <td>
                     <v-btn
                         class="mx-2"

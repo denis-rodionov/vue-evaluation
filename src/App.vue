@@ -100,10 +100,12 @@
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
         />
-        <BottlingForm
+
+        <EntityForm
           v-if="selectedItem === 'bottling'"
           :updatingObject="updatingItem"
           :update="update"
+          :schema="schema['bottling']"
           @close="closeDialog"
           @save="onDialogSave($event)"
           @update="onDialogUpdate($event)"
@@ -196,8 +198,8 @@
   import LabValuesForm from './components/LabValuesForm'
   import EquipmentGeneralList from './components/EquipmentGeneralList'
   import EquipmentGeneralForm from './components/EquipmentGeneralForm'
-  import BottlingForm from './components/BottlingForm'
   import EntityList from './components/EntityList'
+  import EntityForm from './components/EntityForm'
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -209,7 +211,7 @@
       FluidStorageContentList, FluidStorageContentForm,
       VinificationMaterialList, VinificationMaterialForm,
       LabValuesList, LabValuesForm, EquipmentGeneralList, EquipmentGeneralForm,
-      BottlingForm, EntityList
+      EntityList, EntityForm
     },
     data: () => ({ 
       drawer: true,

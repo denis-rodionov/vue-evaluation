@@ -22,7 +22,12 @@ export default class SchemaService {
         const url = this.getUrl(entityName);
         
         try {
-            return await this.getRequest(url);
+            const res = await this.getRequest(url);
+            if (res) {
+                return res[Object.keys(res)[0]];
+            } else {
+                return [];
+            }
         } catch (error) {
             throw new Error(`Could not fetch ${entityName}: ${error}`)
         }

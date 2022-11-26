@@ -1,6 +1,6 @@
 <script>
 export default {
-  props: ['update', 'mutatedObject'],
+  props: ['update', 'mutatedObject', 'entityDisplayName'],
   emits: ['save', 'update', 'close'],
   data: () => ({
   }),
@@ -22,7 +22,7 @@ export default {
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
-          {{ update ? "Update" : "Create" }} "Cultivation"
+          {{ update ? "Update" : `Create ${entityDisplayName}` }}
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>

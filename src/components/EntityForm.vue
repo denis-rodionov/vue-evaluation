@@ -8,7 +8,7 @@ export default {
     data: () => ({
         mutatedObject: {},
     }),
-    props: ['updatingObject', 'update', 'schema'],
+    props: ['updatingObject', 'update', 'schema', 'entityDisplayName'],
     emits: ['close', 'save', 'update'],
     methods: {
         onClose() {
@@ -43,6 +43,7 @@ export default {
         <FormToolbar
           :update="update"
           :mutatedObject="mutatedObject"
+          :entityDisplayName="entityDisplayName"
           @save="onSave"
           @update="onUpdate"
           @close="onClose"

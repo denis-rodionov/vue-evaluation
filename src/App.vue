@@ -30,7 +30,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title>
-        {{ selectedItem ? menuItems[selectedItem].text : "Undefined" }}
+        {{ loaded ? menuItems[selectedItem].text : "Undefined" }}
       </v-toolbar-title>
 
       <v-dialog
@@ -61,6 +61,7 @@
             :updatingObject="updatingItem"
             :update="update"
             :schema="schema[entityName]"
+            :entityDisplayName="menuItems[entityName].text"
             @close="closeDialog"
             @save="onDialogSave($event)"
             @update="onDialogUpdate($event)"
@@ -91,7 +92,7 @@
 
           <v-card-text>
             Are you sure you want to delete the selected item of 
-            {{ menuItems[selectedItem].text }}?
+            {{ selectedItem }}?
           </v-card-text>
 
           <v-card-actions>
@@ -198,11 +199,13 @@
         ] },
       },
       dialog: false,
+      loaded: false,
       updatingItem: {},   // for updating object
       update: false,      // if true, the form is used for update
       error: "",
       successMessage: false,
-      schema: {
+      schema: {},
+      schemaMock: {
         bottling: {
           url:"/bottlings",
           persistence:{
@@ -316,10 +319,21 @@
       },
       async loadItems(entityName) {
         try {
-          this.menuItems[entityName].list = await this.schemaService.getItems(entityName);
+          
+          let menuItem = {};
+          menuItem.list = await this.schemaService.getItems(entityName);
+          
+          if (this.schema[entityName].labels.en) {
+            menuItem.text = this.capitalize(this.schema[entityName].labels.en);
+          } else {
+            throw new Error(`Could not load ${entityName}: labels.en is empty!`);
+          }
+          console.log(`DEBUG: ${menuItem.text}`);
+          menuItem.icon = 'mdi-database';
+          this.menuItems[entityName] = menuItem;
         }
         catch (error) {
-          this.showError(`${error}`)
+          this.showError(`Could not load ${entityName}: ${error}`)
         }
       },
       async onItemUpdate(event) {
@@ -357,6 +371,9 @@
         if (!event) {
           this.closeDialog();
         }
+      },
+      capitalize(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
       }
     },
 
@@ -365,21 +382,20 @@
       
       try {
         this.schema = await this.schemaService.get_schema();
-      }
-      catch (error) {
-        this.showError(`${error}`)
-
-        // TODO: move to try-block when backend works again
-        Object.keys(this.schema).forEach(async (entityName) => {
+        for (const [entityName] of Object.entries(this.schema)) {
           if (!this.selectedItem) {
             this.selectedItem = entityName;
+            //console.logs(`${JSON.stringify(this.menuItems)}`);
           }
-          this.menuItems[entityName] = {
-            text: this.schema[entityName].labels.en,
-            icon: 'mdi-database',
-            list: this.mockItems[entityName].list
-          }
-        });
+          console.log(`Loading entity ${entityName}...`);
+          await this.loadItems(entityName);
+        }
+        console.log("DEBUG: LOADED");
+        console.log(`${JSON.stringify(this.menuItems)}`);
+        this.loaded = true;
+      }
+      catch (error) {
+        this.showError(`Error during page initialisation: ${error}`)
       }
     },
 

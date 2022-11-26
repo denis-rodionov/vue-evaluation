@@ -145,6 +145,7 @@
 
 <script>
   import SchemaService from './services/SchemaService';
+  import shared from './lib/shared.js'
   import EntityList from './components/EntityList'
   import EntityForm from './components/EntityForm'
 
@@ -324,7 +325,7 @@
           menuItem.list = await this.schemaService.getItems(entityName);
           
           if (this.schema[entityName].labels.en) {
-            menuItem.text = this.capitalize(this.schema[entityName].labels.en);
+            menuItem.text = shared.capitalize(this.schema[entityName].labels.en);
           } else {
             throw new Error(`Could not load ${entityName}: labels.en is empty!`);
           }
@@ -371,9 +372,6 @@
         if (!event) {
           this.closeDialog();
         }
-      },
-      capitalize(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
       }
     },
 

@@ -1,5 +1,6 @@
 <script>
 import FormToolbar from './FormToolbar'
+import shared from '../lib/shared.js';
 
 export default {
     components: {
@@ -27,6 +28,9 @@ export default {
         onStateChanged() {
             console.log(`State changed: ${JSON.stringify(this.updatingObject)}`)
             this.mutatedObject = this.updatingObject;
+        },
+        fieldName(str) {
+            return shared.capitalize(str);
         }
     },
     created() {
@@ -57,7 +61,7 @@ export default {
                 v-for="attr in schema.dynamic_attributes"
                 :key="attr.method_name"
                 v-model="mutatedObject[attr.method_name]"
-                :label="attr.labels.en"
+                :label="fieldName(attr.labels.en)"
               ></v-text-field>
             </v-form>
         </v-container>

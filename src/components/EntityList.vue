@@ -1,4 +1,5 @@
 <script>
+import shared from '../lib/shared.js';
 export default {
     props: ['itemList', 'schema'],
     emits: ['update', 'delete'],
@@ -6,6 +7,11 @@ export default {
     }),
     created() {
       console.log(`List created: ${this.itemList}`)
+    },
+    methods: {
+        headerName(str) {
+            return shared.capitalize(str);
+        }
     }
 }
 </script>
@@ -19,7 +25,7 @@ export default {
                         v-for="attr in schema.dynamic_attributes"
                         :key="attr.method_name"
                     >
-                        {{ attr.labels.en }}
+                        {{ headerName(attr.labels.en) }}
                     </th>
                     <th class="text-left">
                         Actions

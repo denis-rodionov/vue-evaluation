@@ -128,7 +128,7 @@
             <v-card>
               <template v-for="(_, entityName) in menuItems">
                 <EntityList
-                  :key="entityName"
+                  :key="entityName + listKey"
                   v-if="selectedItem === entityName"
                   :itemList="menuItems[entityName].list" 
                   :schema="schema[entityName]"
@@ -171,6 +171,7 @@ import { ref } from 'vue';
       updatingItem: {},   // for updating object
       update: false,      // if true, the form is used for update
       editFormKey: ref(0),
+      listKey: ref(0),
       validationErrors: {},
       error: "",
       successMessage: false,
@@ -183,15 +184,12 @@ import { ref } from 'vue';
         try {
           const response = await this.schemaService.createEntity(event, entity);
           if (response['error'] == "Validation Error") {
-            this.validationErrors = {};
-            for (const valErr of response['messages']) {
-              this.validationErrors[valErr.definition_name] = valErr.error_message;
-            }
-            this.rerenderForm();
+            this.showValidationErrors(response);
           } else {
             this.menuItems[entity].list.push(response);
-            await this.showSuccessMessage(`${entity} object is saved!`) 
             this.closeDialog();
+            this.rerenderList();
+            await this.showSuccessMessage(`Object is saved!`);
           }
         }
         catch (err) {
@@ -199,20 +197,35 @@ import { ref } from 'vue';
           await this.showError(`Could not create an item: ${JSON.stringify(err)}`)
         }
       },
+      showValidationErrors(response) {
+        this.validationErrors = {};
+        for (const valErr of response['messages']) {
+          this.validationErrors[valErr.definition_name] = valErr.error_message;
+        }
+        this.rerenderForm();
+      },
       async onDialogUpdate(event) {
         const entity = this.selectedItem;
-        console.log(`Updating object ${JSON.stringify(event)}`);
-        this.closeDialog();
         try {
-          await this.schemaService.updateEntity(event, entity);
-          await this.showSuccessMessage(`${entity} object is updated!`);
+          const response = await this.schemaService.updateEntity(event, entity);
+          if (response['error'] == "Validation Error") {
+            this.showValidationErrors(response);
+          } else {
+            this.closeDialog();
+            this.rerenderList();
+            await this.showSuccessMessage(`Object is updated!`);
+          }
         }
         catch (error) {
+          this.closeDialog();
           await this.showError(`Could not update the object: ${error}`)
         }
       },
       rerenderForm() {
         this.editFormKey++;
+      },
+      rerenderList() {
+        this.listKey++;
       },
       async showError(errorText) {
         this.error = errorText;

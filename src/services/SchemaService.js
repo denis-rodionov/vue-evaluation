@@ -48,7 +48,7 @@ export default class SchemaService {
         console.log(`SCHEMA: Updating ${entityName}: ${JSON.stringify(event)}`)
         const url = this.getUrl(entityName);
         const data = this.getObjectFromEvent(event, entityName);
-        await this.putRequest(url, data, event['id']); 
+        return await this.putRequest(url, data, event['id']); 
     }
 
     async deleteEntity(event, entityName) {
@@ -91,12 +91,15 @@ export default class SchemaService {
         } else if (!response.ok) {
             const error = (data && data.message) || response.statusText;
             throw new Error(error);
+        } else {
+            return result[Object.keys(result)[0]][0];
         }
     }
 
     async putRequest(url, data, id) {
         const fullUrl = `${BASE_URL}${url}/${id}`;
         let response;
+        let result;
 
         console.log(`PUT request on URL ${fullUrl}`)
         try {
@@ -108,15 +111,20 @@ export default class SchemaService {
                 body: JSON.stringify(data)
               });
 
-            const result = await response.json();
+            result = await response.json();
             
             console.log(`PUT request returned: ${JSON.stringify(result)}`)
         } catch (error) {
             console.log(`Failed PUT request. Error: ${JSON.stringify(error)}`);
         }
-        if (!response.ok) {
+        if (response.status === 422) {
+            // validation errors returned
+            return result;
+        } else if (!response.ok) {
             const error = (data && data.message) || response.statusText;
             throw new Error(error);
+        } else {
+            return result[Object.keys(result)[0]][0];
         }
     }
 

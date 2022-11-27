@@ -6,7 +6,10 @@ export default {
     data: () => ({
     }),
     created() {
-      console.log(`List created: ${this.itemList}`)
+        shared.log("List created:", this.itemList);
+    },
+    updated() {
+        shared.log("List changed", this.itemList);
     },
     methods: {
         headerName(str) {
@@ -35,7 +38,7 @@ export default {
             <tbody>
                 <tr
                   v-for="item in itemList"
-                  :key="item[Object.keys(item)[0]]"
+                  :key="item['id']"
                 >
                 <td 
                     v-for="attr in schema.dynamic_attributes"

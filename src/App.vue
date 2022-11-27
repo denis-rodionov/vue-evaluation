@@ -166,41 +166,6 @@ import { ref } from 'vue';
       deletionConfirmDialog: false,
       deletingItem: null,
       menuItems: {},
-      mockItems: {
-        cultivation: { text: 'Cultivation', icon: 'mdi-compost', list: [
-          { plotname: "green", fieldsize: 16, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
-          { plotname: "yelow", fieldsize: 55, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false},
-          { plotname: "blue", fieldsize: 253, variety: "sdf asdf sd fgn sdflgdsf", vines_sum: 3, action_done: "none", issues: false}
-        ]},
-        fluid_storage: { text: 'Fluid Storage', icon: 'mdi-database', list: [
-          { tankame: "Trsef", maxvolume_in_l: 32 },
-          { tankame: "Ufnee", maxvolume_in_l: 34 }
-        ] },
-        fluid_storage_content: { text: 'Fluid Storage Contents', icon: 'mdi-blur-radial', list: [
-          { variety: "Balaf", year: "2002", is_volume_in_l: 2, action_done: "None" },
-          { variety: "feeedddff", year: "2002", is_volume_in_l: 2, action_done: "None" }
-        ] },
-        vinification_material: { text: 'Vinification Products', icon: 'mdi-glass-wine', list: [
-          { kind_of_product: "fweffsdf", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"},
-          { kind_of_product: "fdffws", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"},
-          { kind_of_product: "hgrr", producer: "fsfff", lot_number: "20L", amount_in_x: "233f"}
-        ] },
-        lab_values: { text: 'Lab Values', icon: 'mdi-flask-empty', list: [
-          { sample_name: "t1", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true},
-          { sample_name: "t2", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true},
-          { sample_name: "t3", free_so2: 223, total_so2: 555, p_h: 2, sugar: 1.3, value_ntu: 23, density: 234, alcohol: 10, notes: "good", harvest: true, default_analyse: false, decision_needed: true}
-        ] },
-        equipment_general: { text: 'Equipment', icon: 'mdi-scale', list: [
-          { kind_of_equipment: "fsdf", producer: "fff", serial_number: "2sdffdf", cost_action: "3dsdf", date: "27 November 2022", broken: false },
-          { kind_of_equipment: "3fsdf", producer: "fff", serial_number: "34gws", cost_action: "3dsdf", date: "27 November 2022", broken: false },
-          { kind_of_equipment: "23ff", producer: "fff", serial_number: "gfw333", cost_action: "3dsdf", date: "27 November 2022", broken: false }
-        ] },
-        bottling: { text: 'Bottling Report', icon: 'mdi-bottle-tonic', list: [
-          { kind_of_product: "ewdf1", source_tank: "sdhhn1", lot_number: "356d1", amount_in_x: "g33" },
-          { kind_of_product: "ewdf2", source_tank: "sdhhn2", lot_number: "356d2", amount_in_x: "g33" },
-          { kind_of_product: "ewdf3", source_tank: "sdhhn3", lot_number: "356d3", amount_in_x: "g33" }
-        ] },
-      },
       dialog: false,
       loaded: false,
       updatingItem: {},   // for updating object
@@ -209,82 +174,7 @@ import { ref } from 'vue';
       validationErrors: {},
       error: "",
       successMessage: false,
-      schema: {},
-      schemaMock: {
-        bottling: {
-          url:"/bottlings",
-          persistence:{
-            type: "document"
-          },
-          model_name: "bottling",
-          dynamic_attributes: [
-          {
-            method_name: "kind_of_product",
-            definition_name: "kind_of_product",
-            validators:[
-               {
-                  type:"presence"
-               }
-            ],
-            labels:{
-               en: "name of product",
-               de: "Name des Produkts"
-            },
-            default_value: null,
-            type: "text"
-          },
-          {
-            method_name: "source_tank",
-            definition_name: "source_tank",
-            validators: [
-               {
-                  type:"presence"
-               }
-            ],
-            labels:{
-               en:"source tank",
-               de:"Quelltank"
-            },
-            default_value:null,
-            type:"text"
-          },
-          {
-            method_name: "lot_number",
-            definition_name: "lot_number",
-            validators: [
-               {
-                  type: "presence"
-               }
-            ],
-            labels:{
-               en:"Bottling/Labeling date",
-               de:"Chargennummer"
-            },
-            default_value:null,
-            type: "text"
-          },
-          {
-            method_name: "amount_in_x",
-            definition_name: "amount_in_X",
-            validators:[
-               {
-                  "type":"presence"
-               }
-            ],
-            labels:{
-               en:"amount in pieces",
-               de:"Menge StÃ¼ck"
-            },
-            default_value:null,
-            type:"text"
-          }
-          ],
-          labels:{
-            en: "Bottling/Labeling Report",
-            de: "AbfÃ¼ll/Label Report"
-          }
-        }
-      }
+      schema: {}
     }),
     methods: {
       async onDialogSave(event) {

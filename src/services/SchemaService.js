@@ -37,26 +37,11 @@ export default class SchemaService {
         console.log(`SCHEMA: Creating ${entityName}: ${JSON.stringify(event)}`)
         const url = this.getUrl(entityName);
         const data = this.getObjectFromEvent(event, entityName);
-        await this.postRequest(url, data);
-
-        return data;
+        return await this.postRequest(url, data);
     }
 
-    getObjectFromEvent(event, entityName) {
-        if (entityName == 'cultivation') {
-            return {
-                plotname: event.plotname,
-                fieldSize: event.fieldSize,
-                varity: event.varity,
-                year_planted: event.year_planted,
-                vines_sum: event.vines_sum,
-                action_done: event.action_done,
-                issues: event.issues
-            }
-        }
-        else {
-            throw new Error(`Unknow entity name '${entityName}'`)
-        }
+    getObjectFromEvent(event) {
+        return event;
     }
 
     async updateEntity(event, entityName) {
@@ -81,9 +66,10 @@ export default class SchemaService {
 
     async postRequest(url, data) {
         const fullUrl = BASE_URL + url;
-        let response;
 
         console.log(`POST request on URL ${fullUrl}`)
+        let response;
+        let result;
         try {
             response = await fetch(fullUrl, {
                 method: 'POST',
@@ -93,13 +79,16 @@ export default class SchemaService {
                 body: JSON.stringify(data)
               });
 
-            const result = await response.json();
+            result = await response.json();
             
             console.log(`POST request returned: ${JSON.stringify(result)}`)
         } catch (error) {
             console.log(`Failed post request. Error: ${JSON.stringify(error)}`);
         }
-        if (!response.ok) {
+        if (response.status === 422) {
+            // validation errors returned
+            return result;
+        } else if (!response.ok) {
             const error = (data && data.message) || response.statusText;
             throw new Error(error);
         }

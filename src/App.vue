@@ -56,12 +56,13 @@
 
         <template v-for="(_, entityName) in menuItems">
           <EntityForm
-            :key="entityName"
+            :key="entityName + editFormKey"
             v-if="selectedItem === entityName"
             :updatingObject="updatingItem"
             :update="update"
             :schema="schema[entityName]"
             :entityDisplayName="menuItems[entityName].text"
+            :validationErrors="validationErrors"
             @close="closeDialog"
             @save="onDialogSave($event)"
             @update="onDialogUpdate($event)"
@@ -148,6 +149,7 @@
   import shared from './lib/shared.js'
   import EntityList from './components/EntityList'
   import EntityForm from './components/EntityForm'
+import { ref } from 'vue';
 
   function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -203,6 +205,8 @@
       loaded: false,
       updatingItem: {},   // for updating object
       update: false,      // if true, the form is used for update
+      editFormKey: ref(0),
+      validationErrors: {},
       error: "",
       successMessage: false,
       schema: {},
@@ -286,14 +290,23 @@
       async onDialogSave(event) {
         const entity = this.selectedItem;
         console.log(`Saving ${entity} ${JSON.stringify(event)}`);
-        this.closeDialog();
         try {
-          const createdObject = await this.schemaService.createEntity(event, entity);
-          this.menuItems[entity].list.push(createdObject);
-          await this.showSuccessMessage(`${entity} object is saved!`) 
+          const response = await this.schemaService.createEntity(event, entity);
+          if (response['error'] == "Validation Error") {
+            this.validationErrors = {};
+            for (const valErr of response['messages']) {
+              this.validationErrors[valErr.definition_name] = valErr.error_message;
+            }
+            this.rerenderForm();
+          } else {
+            this.menuItems[entity].list.push(response);
+            await this.showSuccessMessage(`${entity} object is saved!`) 
+            this.closeDialog();
+          }
         }
-        catch (error) { 
-          await this.showError(`Could not create an item: ${error}`)
+        catch (err) {
+          this.closeDialog();
+          await this.showError(`Could not create an item: ${JSON.stringify(err)}`)
         }
       },
       async onDialogUpdate(event) {
@@ -307,6 +320,9 @@
         catch (error) {
           await this.showError(`Could not update the object: ${error}`)
         }
+      },
+      rerenderForm() {
+        this.editFormKey++;
       },
       async showError(errorText) {
         this.error = errorText;
@@ -361,6 +377,7 @@
         this.dialog = false;
         this.update = false;
         this.updatingItem = {};
+        this.validationErrors = {};
       },
       showUpdateDialog(updatingItem) {
         this.updatingItem = updatingItem;
@@ -388,8 +405,7 @@
           console.log(`Loading entity ${entityName}...`);
           await this.loadItems(entityName);
         }
-        console.log("DEBUG: LOADED");
-        console.log(`${JSON.stringify(this.menuItems)}`);
+        console.log("LOADED");
         this.loaded = true;
       }
       catch (error) {

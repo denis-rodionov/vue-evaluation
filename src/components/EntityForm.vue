@@ -9,7 +9,7 @@ export default {
     data: () => ({
         mutatedObject: {},
     }),
-    props: ['updatingObject', 'update', 'schema', 'entityDisplayName'],
+    props: ['updatingObject', 'update', 'schema', 'entityDisplayName', 'validationErrors'],
     emits: ['close', 'save', 'update'],
     methods: {
         onClose() {
@@ -23,10 +23,10 @@ export default {
         },
         onSave() {
             this.$emit('save', this.mutatedObject);
-            this.mutatedObject = {};
+            // this.mutatedObject = {};
         },
         onStateChanged() {
-            console.log(`State changed: ${JSON.stringify(this.updatingObject)}`)
+            console.log("STATE CHANGED");
             this.mutatedObject = this.updatingObject;
         },
         fieldName(str) {
@@ -52,6 +52,7 @@ export default {
           @update="onUpdate"
           @close="onClose"
         />
+        
 
         <v-container>
             <v-form
@@ -62,6 +63,8 @@ export default {
                 :key="attr.method_name"
                 v-model="mutatedObject[attr.method_name]"
                 :label="fieldName(attr.labels.en)"
+                :error="validationErrors[attr.method_name] != null"
+                :error-messages="validationErrors[attr.method_name]"
               ></v-text-field>
             </v-form>
         </v-container>

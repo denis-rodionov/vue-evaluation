@@ -228,6 +228,7 @@ import { ref } from 'vue';
             this.showValidationErrors(response);
           } else {
             this.closeDialog();
+            await this.loadItems(this.selectedItem);
             this.rerenderList();
             await this.showSuccessMessage(`Object is updated!`);
           }

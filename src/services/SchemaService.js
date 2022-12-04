@@ -142,7 +142,7 @@ export default class SchemaService {
         catch (error) {
             throw new Error(`fetch thrown an error: ${error}`);
         }
-        if (response.status != 204) {
+        if (response.status != 200) {
             throw new Error(`DELETE request returned ${response.status}: ${response.statusText} (Expected 204)`);
         }
     }

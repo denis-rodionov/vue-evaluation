@@ -286,9 +286,11 @@ import { ref } from 'vue';
         this.deletionConfirmDialog = false;
         try {
           await this.schemaService.deleteEntity(this.deletingItem, this.selectedItem);
-          await this.showSuccessMessage(`Entity ${this.selectedItem} was deleted: ${this.deletingItem}`)
+          await this.loadItems(this.selectedItem);
+          await this.showSuccessMessage(`Entity ${this.selectedItem} was deleted!`)
+          this.rerenderList();
         } catch (error) {
-          await this.showError(`Could not delete the object: ${error}`)
+          await this.showError(`Could not delete the object: ${error}`);
         }
         this.deletingItem = null;
       },
@@ -319,7 +321,6 @@ import { ref } from 'vue';
         for (const [entityName] of Object.entries(this.schema)) {
           if (!this.selectedItem) {
             this.selectedItem = entityName;
-            //console.logs(`${JSON.stringify(this.menuItems)}`);
           }
           console.log(`Loading entity ${entityName}...`);
           await this.loadItems(entityName);

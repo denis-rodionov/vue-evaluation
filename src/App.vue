@@ -33,6 +33,21 @@
         {{ loaded ? menuItems[selectedItem].text : "Undefined" }}
       </v-toolbar-title>
 
+      <v-spacer></v-spacer>
+
+      <v-btn icon 
+        :x-large="tableView"
+        :x-small="!tableView"
+        @click="tableView=true">
+        <v-icon>mdi-table</v-icon>
+      </v-btn>
+      <v-btn icon
+        :x-large="!tableView"
+        :x-small="tableView"
+        @click="tableView=false">
+        <v-icon>mdi-apps</v-icon>
+      </v-btn>
+
       <v-dialog
         v-model="dialog"
         fullscreen
@@ -46,7 +61,6 @@
             dark
             color="cyan"
             right
-            fixed
             v-bind="attrs"
             v-on="on"
           >
@@ -125,13 +139,14 @@
           <v-col
             cols="12"
           >
-            <v-card>
+            <v-card outlined color="transparent">
               <template v-for="(_, entityName) in menuItems">
                 <EntityList
                   :key="entityName + listKey"
                   v-if="selectedItem === entityName"
                   :itemList="menuItems[entityName].list" 
                   :schema="schema[entityName]"
+                  :tableView="tableView"
                   @update="onItemUpdate($event)"
                   @delete="onItemDelete($event)"
                 />
@@ -175,7 +190,8 @@ import { ref } from 'vue';
       validationErrors: {},
       error: "",
       successMessage: false,
-      schema: {}
+      schema: {},
+      tableView: true
     }),
     methods: {
       async onDialogSave(event) {

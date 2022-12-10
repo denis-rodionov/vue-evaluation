@@ -10,7 +10,8 @@ export default {
     data: () => ({
         reveal: false,
         viewDialog: false,
-        selectedItem: {}
+        selectedItem: {},
+        page: 1
     }),
     created() {
         shared.log("List created:", this.itemList);
@@ -31,93 +32,95 @@ export default {
 </script>
 
 <template>
-    <v-simple-table v-if="tableView">
-        <template v-slot:default>
-            <thead>
-                <v-dialog
-                    v-model="viewDialog"
-                    max-width="290"
-                >
-                    <v-card>
-                      <v-card-title class="text-h5">
-                      </v-card-title>
+    <div class="text-center" v-if="tableView">
+        <v-container>
+            <v-row justify="center">
+                <v-col cols="12">
+                    <v-simple-table>
+                        <template v-slot:default>
+                            <thead>
+                                <v-dialog v-model="viewDialog" max-width="290">
+                                    <v-card>
+                                        <v-card-title class="text-h5">
+                                        </v-card-title>
 
-                      <v-card-text>
-                        <EntityCardView
-                            :item="selectedItem"
-                            :schema="schema"
-                        />
-                      </v-card-text>
+                                        <v-card-text>
+                                            <EntityCardView :item="selectedItem" :schema="schema" />
+                                        </v-card-text>
 
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
 
-                        <v-btn
-                          color="green darken-1"
-                          text
-                          @click="viewDialog = false"
-                        >
-                          Close
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                </v-dialog>
-                <tr>
-                    <th class="text-left"
-                        v-for="attr in schema.dynamic_attributes"
-                        :key="attr.method_name"
-                    >
-                        {{ headerName(attr.labels.en) }}
-                    </th>
-                    <th class="text-left">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                  v-for="item in itemList"
-                  :key="item['id']"
-                  @click="onItemClick(item)"
-                >
-                    <td 
-                        v-for="attr in schema.dynamic_attributes"
-                        :key="attr.method_name"
-                    >{{ item[attr.method_name] }}</td>
-                    <td @click.stop>
-                        <v-btn class="mx-2" fab dark x-small color="cyan" @click="$emit('update', item)">
-                            <v-icon dark>
-                                mdi-pencil
-                            </v-icon>
-                        </v-btn>
-                        <v-btn
-                            class="mx-2"
-                            fab
-                            dark
-                            x-small
-                            color="red"
-                            @click="$emit('delete', item)"
-                        >
-                            <v-icon dark>
-                            mdi-trash-can
-                            </v-icon>
-                        </v-btn>
-                    </td>
-            </tr>
-            </tbody>
-        </template>
-    </v-simple-table>
+                                            <v-btn color="green darken-1" text @click="viewDialog = false">
+                                                Close
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                                <tr>
+                                    <th class="text-left px-0">
+                                        Actions
+                                    </th>
+                                    <th class="text-left pr-1" 
+                                        v-for="attr in schema.dynamic_attributes"
+                                        :key="attr.method_name">
+                                        {{ headerName(attr.labels.en) }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in itemList" :key="item['id']" @click="onItemClick(item)">
+                                    <td @click.stop 
+                                        style="width:80px"
+                                        class="text-left px-0"
+                                    >
+                                        <v-btn class="mx-0" icon color="cyan"
+                                            @click="$emit('update', item)">
+                                            <v-icon >
+                                                mdi-pencil
+                                            </v-icon>
+                                        </v-btn>
+                                        <v-btn class="mx-0" icon color="red" @click="$emit('delete', item)">
+                                            <v-icon dark>
+                                                mdi-trash-can
+                                            </v-icon>
+                                        </v-btn>
+                                    </td>
+                                    <td v-for="attr in schema.dynamic_attributes" 
+                                        :key="attr.method_name"
+                                        class="text-left pr-1"
+                                    >
+                                        {{ item[attr.method_name] }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </template>
+                    </v-simple-table>
+                </v-col>
+                <v-col cols="12">
+                    <v-container class="max-width">
+                        <v-pagination 
+                            v-model="page" 
+                            class="my-4" 
+                            :length="5"
+                            circle
+                            color="cyan"
+                        ></v-pagination>
+                    </v-container>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
+
+
     <v-container v-else>
         <v-row>
-            <v-col cols="3" v-for="item in itemList"
-                          :key="item['id']">
+            <v-col cols="3" v-for="item in itemList" :key="item['id']">
                 <v-card class="mx-auto" max-width="344">
                     <v-card-text>
-                        <EntityCardView 
-                            :item="item"
-                            :schema="schema" />
+                        <EntityCardView :item="item" :schema="schema" />
                     </v-card-text>
-                    <v-card-actions>    
+                    <v-card-actions>
                         <v-btn text color="cyan accent-4" @click="$emit('update', item)">
                             Edit
                         </v-btn>

@@ -1,10 +1,16 @@
 <script>
 import shared from '../lib/shared.js';
+import EntityCardView from './EntityCardView'
 export default {
     props: ['itemList', 'schema', 'tableView'],
+    components: {
+        EntityCardView
+    },
     emits: ['update', 'delete'],
     data: () => ({
-        reveal: false
+        reveal: false,
+        viewDialog: false,
+        selectedItem: {}
     }),
     created() {
         shared.log("List created:", this.itemList);
@@ -15,6 +21,10 @@ export default {
     methods: {
         headerName(str) {
             return shared.capitalize(str);
+        },
+        onItemClick(item) {
+            this.viewDialog = true;
+            this.selectedItem = item;
         }
     }
 }
@@ -24,6 +34,34 @@ export default {
     <v-simple-table v-if="tableView">
         <template v-slot:default>
             <thead>
+                <v-dialog
+                    v-model="viewDialog"
+                    max-width="290"
+                >
+                    <v-card>
+                      <v-card-title class="text-h5">
+                      </v-card-title>
+
+                      <v-card-text>
+                        <EntityCardView
+                            :item="selectedItem"
+                            :schema="schema"
+                        />
+                      </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+
+                        <v-btn
+                          color="green darken-1"
+                          text
+                          @click="viewDialog = false"
+                        >
+                          Close
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                </v-dialog>
                 <tr>
                     <th class="text-left"
                         v-for="attr in schema.dynamic_attributes"
@@ -40,30 +78,31 @@ export default {
                 <tr
                   v-for="item in itemList"
                   :key="item['id']"
+                  @click="onItemClick(item)"
                 >
-                <td 
-                    v-for="attr in schema.dynamic_attributes"
-                    :key="attr.method_name"
-                >{{ item[attr.method_name] }}</td>
-                <td>
+                    <td 
+                        v-for="attr in schema.dynamic_attributes"
+                        :key="attr.method_name"
+                    >{{ item[attr.method_name] }}</td>
+                    <td @click.stop>
                         <v-btn class="mx-2" fab dark x-small color="cyan" @click="$emit('update', item)">
                             <v-icon dark>
                                 mdi-pencil
                             </v-icon>
                         </v-btn>
-                    <v-btn
-                        class="mx-2"
-                        fab
-                        dark
-                        x-small
-                        color="red"
-                        @click="$emit('delete', item)"
-                    >
-                        <v-icon dark>
-                        mdi-trash-can
-                        </v-icon>
-                    </v-btn>
-                </td>
+                        <v-btn
+                            class="mx-2"
+                            fab
+                            dark
+                            x-small
+                            color="red"
+                            @click="$emit('delete', item)"
+                        >
+                            <v-icon dark>
+                            mdi-trash-can
+                            </v-icon>
+                        </v-btn>
+                    </td>
             </tr>
             </tbody>
         </template>
@@ -74,16 +113,9 @@ export default {
                           :key="item['id']">
                 <v-card class="mx-auto" max-width="344">
                     <v-card-text>
-                        <p class="text-h4 text--primary">
-                            {{ item[Object.keys(item)[0]] }}
-                        </p>
-                        <p v-for="attr in schema.dynamic_attributes"
-                           :key="attr.method_name"
-                        >
-                            <b>{{ headerName(attr.method_name) }}:&nbsp;</b>
-                            <span align="right" v-if="item[attr.method_name]">{{ item[attr.method_name] }}</span>
-                            <span v-if="!item[attr.method_name]">N/A</span>
-                        </p>
+                        <EntityCardView 
+                            :item="item"
+                            :schema="schema" />
                     </v-card-text>
                     <v-card-actions>    
                         <v-btn text color="cyan accent-4" @click="$emit('update', item)">
